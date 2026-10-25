@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Treasure Odyssey RPG - Ultimate Hardcore Evolution Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+        body {
+            font-family: 'Inter', 'Jua', sans-serif;
+            background-color: #030712;
+            color: #f8fafc;
+            margin: 0; padding: 0; width: 100vw; min-height: 100vh; min-height: 100dvh;
+            display: flex; align-items: center; justify-content: center; overflow-x: hidden;
+        }
+        .app-container {
+            max-width: 440px; width: 100%; min-height: 100vh; min-height: 100dvh;
+            margin: 0 auto; display: flex; flex-direction: column; position: relative;
+            background: linear-gradient(135deg, #090d16 0%, #020617 100%);
+            box-shadow: 0 0 35px rgba(0,0,0,0.95);
+        }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+        
+        .evo-stage-0 { border: 1.5px solid rgba(255,255,255,0.15) !important; }
+        .evo-stage-1 { border: 3px solid #38bdf8 !important; box-shadow: 0 0 16px rgba(56, 189, 248, 0.7), inset 0 0 8px rgba(56, 189, 248, 0.4); }
+        .evo-stage-2 { border: 3px solid #c084fc !important; box-shadow: 0 0 22px rgba(192, 132, 252, 0.9), inset 0 0 12px rgba(192, 132, 252, 0.6); }
+        
+        @keyframes evo-stage-3-pulse {
+            0%, 100% { border-color: #fbbf24; box-shadow: 0 0 30px rgba(251, 191, 36, 0.95), inset 0 0 16px rgba(244, 63, 94, 0.8); }
+            50% { border-color: #f43f5e; box-shadow: 0 0 50px rgba(244, 63, 94, 1), inset 0 0 24px rgba(251, 191, 36, 1); }
+        }
+        .evo-stage-3 { animation: evo-stage-3-pulse 2s infinite ease-in-out; border: 3.5px solid #fbbf24 !important; }
+        
+        @keyframes mythic-glow { 0%, 100% { box-shadow: 0 0 25px rgba(234, 179, 8, 0.8); } 50% { box-shadow: 0 0 50px rgba(234, 179, 8, 1); } }
+        .mythic-glow { animation: mythic-glow 2s infinite ease-in-out; border: 3px solid #fde047 !important; }
+        
+        @keyframes legendary-glow { 0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.7); } 50% { box-shadow: 0 0 35px rgba(245, 158, 11, 0.95); } }
+        .legendary-glow { animation: legendary-glow 2.5s infinite ease-in-out; border: 2.5px solid #fbbf24 !important; }
+
+        .glass-panel { background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        
+        .treasure-card-frame {
+            border-radius: 1.25rem; position: relative; overflow: hidden; display: flex; flex-direction: column;
+            align-items: center; justify-content: space-between; padding: 8px; height: 195px; backdrop-filter: blur(8px);
+        }
+        .treasure-icon-box {
+            width: 72px; height: 72px; border-radius: 1rem; display: flex; align-items: center; justify-content: center;
+            background: radial-gradient(circle, rgba(15,23,42,0.95) 0%, rgba(2,6,23,0.98) 100%);
+            box-shadow: inset 0 3px 8px rgba(255,255,255,0.2), 0 6px 16px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+        @keyframes portal-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.04); } 100% { transform: rotate(360deg) scale(1); } }
+        .portal-ring { animation: portal-spin 12s linear infinite; }
+        @keyframes portal-reverse { 0% { transform: rotate(360deg) scale(1); } 50% { transform: rotate(180deg) scale(0.96); } 100% { transform: rotate(0deg) scale(1); } }
+        .portal-ring-rev { animation: portal-reverse 8s linear infinite; }
+        @keyframes float-anim { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-4px) rotate(0.5deg); } }
+        .floating { animation: float-anim 3.5s infinite ease-in-out; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container border border-slate-800/80">
+        <!-- Top Status Bar -->
+        <header class="px-4 py-3 glass-panel border-b border-slate-800/80 flex justify-between items-center z-10 flex-shrink-0">
+            <div class="flex items-center space-x-2">
+                <span class="text-xl">✨</span>
+                <span class="font-bold tracking-wider text-amber-400 text-xs font-['Jua']">TREASURE ODYSSEY</span>
+            </div>
+            <div class="flex items-center space-x-2 text-xs">
+                <div class="bg-slate-900/90 px-3 py-1 rounded-full flex items-center space-x-1.5 border border-amber-500/40">
+                    <span>🪙</span>
+                    <span id="header-gold" class="font-bold text-amber-300">20,000</span>
+                </div>
+                <div class="bg-slate-900/90 px-3 py-1 rounded-full flex items-center space-x-1.5 border border-cyan-500/40">
+                    <span>💎</span>
+                    <span id="header-gems" class="font-bold text-cyan-300">800</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="flex-1 relative pb-28 pt-2 overflow-y-auto"></main>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="fixed bottom-3 left-1/2 transform -translate-x-1/2 max-w-[420px] w-[calc(100%-24px)] h-16 glass-panel border border-slate-700/60 rounded-2xl flex justify-around items-center px-1 z-20 flex-shrink-0 shadow-2xl">
+            <button onclick="switchTab('gacha')" id="nav-btn-gacha" class="flex flex-col items-center justify-center w-1/6 py-1 text-amber-400 transition">
+                <span class="text-base">⛩️</span>
+                <span class="text-[9px] mt-0.5 font-medium">뽑기</span>
+            </button>
+            <button onclick="switchTab('inventory')" id="nav-btn-inventory" class="flex flex-col items-center justify-center w-1/6 py-1 text-slate-400 transition">
+                <span class="text-base">🎒</span>
+                <span class="text-[9px] mt-0.5 font-medium">보관함</span>
+            </button>
+            <button onclick="switchTab('codex')" id="nav-btn-codex" class="flex flex-col items-center justify-center w-1/6 py-1 text-slate-400 transition">
+                <span class="text-base">📖</span>
+                <span class="text-[9px] mt-0.5 font-medium">도감</span>
+            </button>
+            <button onclick="switchTab('upgrade')" id="nav-btn-upgrade" class="flex flex-col items-center justify-center w-1/6 py-1 text-slate-400 transition">
+                <span class="text-base">⚡</span>
+                <span class="text-[9px] mt-0.5 font-medium">강화</span>
+            </button>
+            <button onclick="switchTab('battle')" id="nav-btn-battle" class="flex flex-col items-center justify-center w-1/6 py-1 text-slate-400 transition">
+                <span class="text-base">⚔️</span>
+                <span class="text-[9px] mt-0.5 font-medium">전투</span>
+            </button>
+            <button onclick="switchTab('trade')" id="nav-btn-trade" class="flex flex-col items-center justify-center w-1/6 py-1 text-slate-400 transition">
+                <span class="text-base">🤝</span>
+                <span class="text-[9px] mt-0.5 font-medium">교환실</span>
+            </button>
+        </nav>
+
+        <!-- Modal Container -->
+        <div id="modal-container" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4"></div>
+
+        <!-- Toast Box -->
+        <div id="toast" class="fixed top-16 left-1/2 transform -translate-x-1/2 bg-slate-900/95 text-white px-4 py-2 rounded-xl shadow-2xl border border-slate-700 text-xs font-medium opacity-0 transition-opacity duration-300 pointer-events-none z-50"></div>
+    </div>
+
+    <script>
+        const GAME_DATA_KEY = 'treasure_odyssey_complete_v315';
+        let gameState = {
+            gold: 20000,
+            gems: 800,
+            inventory: [],
+            codexUnlocked: [],
+            activeTreasureUid: null,
+            usedTradeCodes: [],
+            recordDungeonFloor: 1
+        };
+
+        const RARITIES = {
+            COMMON: { name: '일반 (Common)', key: 'COMMON', bg: 'bg-gradient-to-b from-slate-700 via-slate-800 to-slate-950', border: 'border-slate-500 shadow-slate-900/60', text: 'text-slate-300', chance: 0.52 },
+            RARE: { name: '희귀 (Rare)', key: 'RARE', bg: 'bg-gradient-to-b from-blue-700 via-indigo-900 to-slate-950', border: 'border-blue-400 shadow-blue-500/40', text: 'text-blue-300', chance: 0.30 },
+            EPIC: { name: '영웅 (Epic)', key: 'EPIC', bg: 'bg-gradient-to-b from-purple-700 via-fuchsia-900 to-slate-950', border: 'border-purple-400 shadow-purple-500/50', text: 'text-purple-300', chance: 0.169 },
+            LEGENDARY: { name: '전설 (Legendary)', key: 'LEGENDARY', bg: 'bg-gradient-to-b from-amber-600 via-orange-800 to-stone-950', border: 'border-amber-400 legendary-glow', text: 'text-amber-300', chance: 0.01 },
+            MYTHIC: { name: '신화 (Mythic)', key: 'MYTHIC', bg: 'bg-gradient-to-b from-rose-600 via-red-800 to-amber-950', border: 'border-yellow-300 mythic-glow', text: 'text-yellow-300', chance: 0.001 }
+        };
+
+        let ALL_TREASURES_DATABASE = [];
+
+        function generateTreasureDatabase() {
+            const db = [];
+            const commonData = [
+                ["고대 동전", '<circle cx="32" cy="32" r="22" fill="#d97706" stroke="#fbbf24" stroke-width="2"/><circle cx="32" cy="32" r="14" fill="none" stroke="#78350f" stroke-width="1.5"/><rect x="29" y="24" width="6" height="16" fill="#78350f"/>'],
+                ["빛바랜 엽전", '<circle cx="32" cy="32" r="22" fill="#64748b" stroke="#94a3b8" stroke-width="2"/><rect x="26" y="26" width="12" height="12" fill="#0f172a"/><circle cx="32" cy="32" r="4" fill="#cbd5e1"/>'],
+                ["녹슨 철단추", '<circle cx="32" cy="32" r="20" fill="#713f12" stroke="#a16207" stroke-width="3"/><circle cx="32" cy="32" r="12" fill="#451a03"/><circle cx="28" cy="28" r="2.5" fill="#fde047"/><circle cx="36" cy="36" r="2.5" fill="#fde047"/>'],
+                ["구리 조각", '<polygon points="12,40 24,14 48,22 56,50 20,54" fill="#b45309" stroke="#fbbf24" stroke-width="2"/><path d="M24 14l16 12-8 14" fill="none" stroke="#f59e0b" stroke-width="2"/>'],
+                ["거친 돌멩이", '<path d="M16 44c-4-12 2-26 14-28s22 4 24 18-8 22-22 20-16-4-16-10z" fill="#475569" stroke="#94a3b8" stroke-width="2"/><circle cx="26" cy="28" r="3" fill="#334155"/><circle cx="42" cy="38" r="2" fill="#334155"/>'],
+                ["깨진 토기 조각", '<path d="M14 48L22 18h24l6 30z" fill="#9a3412" stroke="#c2410c" stroke-width="2"/><path d="M22 18l12 10-6 20" fill="none" stroke="#ea580c" stroke-width="2"/>'],
+                ["나무 조각", '<path d="M12 36l8-22h24l8 22-16 14z" fill="#78350f" stroke="#92400e" stroke-width="2"/><path d="M20 14l12 22 12-22" fill="none" stroke="#b45309" stroke-width="2"/>'],
+                ["조개껍데기", '<path d="M32 10C18 10 12 24 16 42c8 4 24 4 32 0 4-18-2-32-16-32z" fill="#fbcfe8" stroke="#f472b6" stroke-width="2"/><path d="M32 10v32M22 16l10 20M42 16L32 36" stroke="#db2777" stroke-width="1.5"/>'],
+                ["낡은 양피지", '<rect x="14" y="14" width="36" height="36" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><path d="M20 22h24M20 30h18M20 38h20" stroke="#92400e" stroke-width="2" stroke-linecap="round"/>'],
+                ["구형 태엽", '<circle cx="32" cy="32" r="18" fill="none" stroke="#b45309" stroke-width="3"/><circle cx="32" cy="32" r="6" fill="#fbbf24"/><path d="M32 14v8M32 42v8M14 32h8M42 32h8" stroke="#d97706" stroke-width="3"/>'],
+                ["이끼 낀 밧줄", '<path d="M14 32c6-10 12 10 18 0s12 10 18 0" fill="none" stroke="#166534" stroke-width="6" stroke-linecap="round"/><path d="M14 32c6-10 12 10 18 0s12 10 18 0" fill="none" stroke="#22c55e" stroke-width="2"/>'],
+                ["빛바랜 깃털", '<path d="M32 8c-8 12-14 26-6 40 10-6 16-22 6-40z" fill="#cbd5e1" stroke="#94a3b8" stroke-width="2"/><path d="M32 16v32" stroke="#475569" stroke-width="2"/>'],
+                ["작은 뼈조각", '<circle cx="20" cy="22" r="6" fill="#f8fafc"/><circle cx="44" cy="42" r="6" fill="#f8fafc"/><rect x="22" y="24" width="20" height="16" fill="#f8fafc" transform="rotate(35 32 32)"/>'],
+                ["녹슨 못", '<path d="M28 12h8v8l12 24H16l12-24v-8z" fill="#713f12" stroke="#a16207" stroke-width="2"/>'],
+                ["거친 모래주머니", '<path d="M18 24h28l4 26H14z" fill="#ca8a04" stroke="#a16207" stroke-width="2"/><path d="M22 24c0-6 8-8 10-8s10 2 10 8" fill="none" stroke="#854d0e" stroke-width="2"/>'],
+                ["빛바랜 구슬", '<circle cx="32" cy="32" r="16" fill="#94a3b8" stroke="#cbd5e1" stroke-width="2"/><circle cx="26" cy="26" r="4" fill="#f8fafc" opacity="0.6"/>'],
+                ["작은 병뚜껑", '<circle cx="32" cy="32" r="18" fill="#475569" stroke="#64748b" stroke-width="3"/><circle cx="32" cy="32" r="10" fill="#1e293b"/>'],
+                ["오래된 단추", '<circle cx="32" cy="32" r="16" fill="#b45309" stroke="#92400e" stroke-width="2"/><circle cx="32" cy="32" r="10" fill="#78350f"/><circle cx="29" cy="29" r="1.5" fill="#fbbf24"/><circle cx="35" cy="29" r="1.5" fill="#fbbf24"/>'],
+                ["깨진 항아리", '<path d="M20 18h24l4 30H16z" fill="#854d0e" stroke="#713f12" stroke-width="2"/><ellipse cx="32" cy="18" rx="12" ry="4" fill="#451a03"/>'],
+                ["구운 점토판", '<rect x="14" y="16" width="36" height="32" rx="2" fill="#9a3412" stroke="#7c2d12" stroke-width="2"/><path d="M20 24h12M20 32h24M20 40h16" stroke="#fed7aa" stroke-width="2" stroke-linecap="round"/>'],
+                ["낡은 부적", '<polygon points="32,10 50,32 32,54 14,32" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><circle cx="32" cy="32" r="8" fill="#b91c1c"/>'],
+                ["빛바랜 리본", '<path d="M16 22l16 16 16-16M32 38v14" fill="none" stroke="#f472b6" stroke-width="5" stroke-linecap="round"/>'],
+                ["녹슨 열쇠", '<circle cx="22" cy="22" r="8" fill="none" stroke="#713f12" stroke-width="4"/><path d="M28 28l18 18M38 38l6-6M42 46l4-4" stroke="#713f12" stroke-width="4" stroke-linecap="round"/>'],
+                ["작은 청동방울", '<circle cx="32" cy="36" r="14" fill="#d97706" stroke="#b45309" stroke-width="2"/><path d="M26 22h12l2 4H24z" fill="#b45309"/>'],
+                ["거친 기장알", '<circle cx="22" cy="32" r="6" fill="#fde047"/><circle cx="32" cy="26" r="6" fill="#fde047"/><circle cx="42" cy="32" r="6" fill="#fde047"/><circle cx="32" cy="40" r="6" fill="#fde047"/>'],
+                ["마른 나뭇가지", '<path d="M14 44l12-18-6-8m12 16l14-16m-4 12l10 12" fill="none" stroke="#78350f" stroke-width="4" stroke-linecap="round"/>'],
+                ["깨진 거울조각", '<polygon points="20,14 48,20 40,50 16,40" fill="#e0f2fe" stroke="#38bdf8" stroke-width="2"/><path d="M24 22l16 6-4 18" fill="none" stroke="#bae6fd" stroke-width="2"/>'],
+                ["빛바랜 인장", '<circle cx="32" cy="32" r="18" fill="#991b1b" stroke="#7f1d1d" stroke-width="3"/><path d="M24 32h16M32 24v16" stroke="#fef08a" stroke-width="3"/>'],
+                ["조잡한 돌도끼", '<path d="M14 18l18 18M32 26l14 14-8 8-14-14z" fill="#475569" stroke="#334155" stroke-width="2"/><path d="M36 44l12 12" stroke="#78350f" stroke-width="6" stroke-linecap="round"/>'],
+                ["오래된 향낭", '<path d="M20 20h24c4 16-2 28-12 28s-16-12-12-28z" fill="#14532d" stroke="#166534" stroke-width="2"/><path d="M32 14v6" stroke="#ca8a04" stroke-width="3"/>'],
+                ["먼지 쌓인 펜", '<path d="M14 50l36-36c4 4 4 8 0 12L26 50z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/><path d="M14 50l10-10" stroke="#713f12" stroke-width="4"/>'],
+                ["찢어진 천조각", '<path d="M16 18l32 6-8 28-24-4z" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2" stroke-dasharray="6 4"/>'],
+                ["녹슨 칼자루", '<path d="M24 20h16v16H24z" fill="#713f12" stroke="#451a03" stroke-width="2"/><rect x="29" y="36" width="6" height="16" fill="#475569"/>'],
+                ["마른 허브잎", '<path d="M32 10c12 12 14 26 0 44-14-18-12-32 0-44z" fill="#15803d" stroke="#166534" stroke-width="2"/><path d="M32 14v36" stroke="#166534" stroke-width="2"/>'],
+                ["구운 감자", '<ellipse cx="32" cy="34" rx="16" ry="12" fill="#92400e" stroke="#78350f" stroke-width="2"/><path d="M24 30c4-4 12-4 16 0" fill="none" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>'],
+                ["낡은 가죽끈", '<path d="M16 32c8-8 16 8 24 0s8 8 8 8" fill="none" stroke="#a16207" stroke-width="4" stroke-linecap="round"/>'],
+                ["깨진 병목", '<path d="M22 14h20l-4 18H26z" fill="#334155" stroke="#64748b" stroke-width="2"/><ellipse cx="32" cy="14" rx="10" ry="3" fill="#1e293b"/>'],
+                ["빛바랜 낚싯바늘", '<path d="M32 14v22c0 6-6 8-10 4" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>'],
+                ["거친 부싯돌", '<polygon points="20,16 46,24 38,48 14,36" fill="#475569" stroke="#94a3b8" stroke-width="2"/>'],
+                ["말린 버섯", '<path d="M22 28c0-8 10-12 20 0z" fill="#9a3412" stroke="#c2410c" stroke-width="2"/><rect x="29" y="28" width="6" height="16" fill="#d97706"/>'],
+                ["녹슨 방울", '<circle cx="32" cy="36" r="14" fill="#713f12" stroke="#a16207" stroke-width="2"/><circle cx="32" cy="20" r="4" fill="#a16207"/>'],
+                ["빛바랜 양초토막", '<rect x="26" y="22" width="12" height="26" rx="2" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><path d="M32 16v6" stroke="#451a03" stroke-width="2"/>'],
+                ["조잡한 짚인형", '<circle cx="32" cy="20" r="8" fill="#ca8a04" stroke="#a16207" stroke-width="2"/><path d="M20 32h24M32 28v20" stroke="#a16207" stroke-width="4" stroke-linecap="round"/>'],
+                ["구멍 난 동전", '<circle cx="32" cy="32" r="18" fill="#b45309" stroke="#fbbf24" stroke-width="2"/><circle cx="32" cy="32" r="6" fill="#0f172a"/>'],
+                ["빛바랜 헝겊조각", '<path d="M18 20h28l-6 26H24z" fill="#475569" stroke="#94a3b8" stroke-width="2" stroke-dasharray="3 3"/>']
+            ];
+            for (let i = 0; i < commonData.length; i++) {
+                db.push({ id: `com_${i+1}`, name: commonData[i][0], rarity: 'COMMON', svg: `<svg viewBox="0 0 64 64" class="w-12 h-12 filter drop-shadow-md">${commonData[i][1]}</svg>`, rawSvg: commonData[i][1], basePower: 15 + i * 2 });
+            }
+
+            const rareData = [
+                ["비취 보옥", '<circle cx="32" cy="32" r="22" fill="#047857" stroke="#10b981" stroke-width="3"/><circle cx="32" cy="32" r="12" fill="#6ee7b7" opacity="0.8"/><circle cx="26" cy="26" r="3" fill="#ffffff" opacity="0.7"/>'],
+                ["루비 반지", '<circle cx="32" cy="32" r="20" fill="none" stroke="#fbbf24" stroke-width="5"/><polygon points="32,16 42,28 32,40 22,28" fill="#e11d48" stroke="#f43f5e" stroke-width="2"/>'],
+                ["사파이어 펜던트", '<path d="M32 12l16 12-16 28L16 24z" fill="#1d4ed8" stroke="#60a5fa" stroke-width="3"/><circle cx="32" cy="28" r="6" fill="#93c5fd"/>'],
+                ["은빛 단검", '<path d="M32 8l8 12v26l-8 10-8-10V20z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/><rect x="28" y="44" width="8" height="12" fill="#334155"/>'],
+                ["마법 양피지", '<rect x="12" y="14" width="40" height="36" rx="4" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/><circle cx="32" cy="32" r="10" fill="#a855f7"/>'],
+                ["정령의 물방울", '<path d="M32 10c0 0-16 18-16 28a16 16 0 0 0 32 0c0-10-16-28-16-28z" fill="#38bdf8" stroke="#bae6fd" stroke-width="2"/><circle cx="26" cy="34" r="3" fill="#ffffff" opacity="0.8"/>'],
+                ["호박석 조각", '<polygon points="16,48 24,16 48,20 52,48" fill="#d97706" stroke="#fbbf24" stroke-width="2"/><ellipse cx="32" cy="32" rx="8" ry="6" fill="#fef08a" opacity="0.6"/>'],
+                ["황금 동전", '<circle cx="32" cy="32" r="22" fill="#f59e0b" stroke="#fde047" stroke-width="3"/><text x="32" y="38" font-size="18" fill="#78350f" text-anchor="middle" font-weight="bold">👑</text>'],
+                ["청금석 구슬", '<circle cx="32" cy="32" r="20" fill="#1e3a8a" stroke="#3b82f6" stroke-width="3"/><circle cx="32" cy="32" r="10" fill="#60a5fa"/><circle cx="26" cy="26" r="3" fill="#ffffff"/>'],
+                ["바다의 진주", '<circle cx="32" cy="32" r="18" fill="#f8fafc" stroke="#e2e8f0" stroke-width="3" filter="drop-shadow(0 0 8px #38bdf8)"/><circle cx="26" cy="26" r="4" fill="#ffffff"/>'],
+                ["오팔 브로치", '<ellipse cx="32" cy="32" rx="20" ry="14" fill="#f472b6" stroke="#fb7185" stroke-width="3"/><ellipse cx="32" cy="32" rx="10" ry="6" fill="#38bdf8" opacity="0.7"/>'],
+                ["토파즈 귀걸이", '<circle cx="32" cy="18" r="6" fill="#f59e0b"/><path d="M32 24v8l10 16H22z" fill="#fbbf24" stroke="#d97706" stroke-width="2"/>'],
+                ["가넷 목걸이", '<path d="M16 20c16 20 16 20 32 0" fill="none" stroke="#f59e0b" stroke-width="3"/><polygon points="32,34 40,46 32,54 24,46" fill="#991b1b" stroke="#ef4444" stroke-width="2"/>'],
+                ["마력의 수정", '<polygon points="32,8 48,24 40,52 24,52 16,24" fill="#c084fc" stroke="#e879f9" stroke-width="2"/><polygon points="32,16 40,26 34,44 30,44 24,26" fill="#f3e8ff" opacity="0.7"/>'],
+                ["바람의 깃털", '<path d="M32 6c-10 14-12 32-2 46 12-12 14-30 2-46z" fill="#38bdf8" stroke="#7dd3fc" stroke-width="2"/><path d="M32 14v32" stroke="#0284c7" stroke-width="2"/>'],
+                ["서슬린 검", '<path d="M32 6l6 10v32l-6 10-6-10V16z" fill="#94a3b8" stroke="#e2e8f0" stroke-width="2"/><path d="M32 16v32" stroke="#38bdf8" stroke-width="2"/>'],
+                ["고대 마법서", '<rect x="16" y="14" width="32" height="36" rx="3" fill="#1e1b4b" stroke="#7c3aed" stroke-width="3"/><path d="M32 14v36M22 24h20" stroke="#c084fc" stroke-width="2"/>'],
+                ["빛나는 성수병", '<path d="M26 14h12v8l6 24H20l6-24z" fill="#bae6fd" stroke="#0284c7" stroke-width="2"/><ellipse cx="32" cy="20" rx="4" ry="2" fill="#0284c7"/>'],
+                ["기사의 인장", '<circle cx="32" cy="32" r="20" fill="#b45309" stroke="#fbbf24" stroke-width="3"/><path d="M32 18l6 10h10l-8 6 3 10-9-6-9 6 3-10-8-6h10z" fill="#fde047"/>'],
+                ["요정의 가루 주머니", '<path d="M20 24h24l-4 26H24z" fill="#ec4899" stroke="#f472b6" stroke-width="2"/><circle cx="32" cy="32" r="5" fill="#fef08a" filter="drop-shadow(0 0 6px #fef08a)"/>'],
+                ["황혼의 모래시계", '<circle cx="32" cy="32" r="18" fill="none" stroke="#d97706" stroke-width="4"/><path d="M22 18h20M22 46h20M24 18l16 28M40 18L24 46" stroke="#fbbf24" stroke-width="2"/>'],
+                ["에메랄드 나침반", '<circle cx="32" cy="32" r="20" fill="#065f46" stroke="#34d399" stroke-width="3"/><polygon points="32,16 36,32 32,48 28,32" fill="#10b981"/>'],
+                ["흑요석 부적", '<polygon points="32,10 50,32 32,54 14,32" fill="#1e293b" stroke="#475569" stroke-width="3"/><circle cx="32" cy="32" r="8" fill="#e2e8f0"/>'],
+                ["코발트 뿔피리", '<path d="M16 40c4-16 16-24 32-24v8c-12 0-20 6-24 16z" fill="#1e40af" stroke="#60a5fa" stroke-width="3"/>'],
+                ["태양빛 화살촉", '<polygon points="32,8 44,48 32,38 20,48" fill="#d97706" stroke="#fbbf24" stroke-width="2"/>'],
+                ["자수정 성배", '<path d="M20 18h24l-4 28H24z" fill="#581c87" stroke="#c084fc" stroke-width="3"/><ellipse cx="32" cy="18" rx="12" ry="4" fill="#7e22ce"/>'],
+                ["심해의 소라껍데기", '<path d="M32 12c12 0 20 10 16 22-4 12-16 18-24 14-8-4-8-16 0-24z" fill="#0284c7" stroke="#38bdf8" stroke-width="2"/>'],
+                ["성스러운 성관", '<circle cx="32" cy="32" r="18" fill="none" stroke="#f59e0b" stroke-width="4"/><path d="M32 14v36M14 32h36" stroke="#fde047" stroke-width="3"/>'],
+                ["서리의 수정조각", '<polygon points="32,6 48,22 42,48 22,48 16,22" fill="#0284c7" stroke="#e0f2fe" stroke-width="2"/>'],
+                ["붉은 화염석", '<polygon points="32,10 50,24 44,50 20,50 14,24" fill="#991b1b" stroke="#f87171" stroke-width="3"/>'],
+                ["오닉스 팬던트", '<polygon points="32,10 50,32 32,54 14,32" fill="#1e293b" stroke="#cbd5e1" stroke-width="2"/><circle cx="32" cy="32" r="6" fill="#38bdf8"/>'],
+                ["문스톤 링", '<circle cx="32" cy="32" r="18" fill="none" stroke="#93c5fd" stroke-width="4"/><circle cx="32" cy="32" r="8" fill="#e0f2fe"/>'],
+                ["플레임 브로치", '<circle cx="32" cy="32" r="16" fill="#c2410c" stroke="#fb923c" stroke-width="3"/><path d="M32 18l4 8h-8z" fill="#fde047"/>'],
+                ["스타 루비", '<polygon points="32,12 42,26 54,32 42,38 32,52 22,38 10,32 22,26" fill="#991b1b" stroke="#f87171" stroke-width="2"/>'],
+                ["스카이 다이아", '<polygon points="32,8 52,32 32,56 12,32" fill="#0369a1" stroke="#38bdf8" stroke-width="3"/>'],
+                ["스톰 스톤", '<circle cx="32" cy="32" r="20" fill="#334155" stroke="#38bdf8" stroke-width="3"/><path d="M22 26l10 12 10-12" fill="none" stroke="#fde047" stroke-width="3"/>'],
+                ["네이처 가드", '<path d="M32 10c12 4 18 18 12 30-10 6-22-2-20-16 2-10 4-14 8-14z" fill="#14532d" stroke="#4ade80" stroke-width="2"/>'],
+                ["아이언 뱅글", '<circle cx="32" cy="32" r="18" fill="none" stroke="#64748b" stroke-width="6"/><circle cx="32" cy="32" r="10" fill="none" stroke="#475569" stroke-width="2"/>'],
+                ["골든 피스", '<circle cx="32" cy="32" r="18" fill="#ca8a04" stroke="#fde047" stroke-width="3"/><path d="M24 32h16" stroke="#78350f" stroke-width="4"/>'],
+                ["새로운 해골 반지", '<circle cx="32" cy="32" r="16" fill="#1e293b" stroke="#94a3b8" stroke-width="3"/><circle cx="27" cy="28" r="3" fill="#fff"/><circle cx="37" cy="28" r="3" fill="#fff"/>']
+            ];
+            for (let i = 0; i < rareData.length; i++) {
+                db.push({ id: `rar_${i+1}`, name: rareData[i][0], rarity: 'RARE', svg: `<svg viewBox="0 0 64 64" class="w-12 h-12 filter drop-shadow-[0_4px_10px_rgba(2,132,199,0.8)]">${rareData[i][1]}</svg>`, rawSvg: rareData[i][1], basePower: 120 + i * 15 });
+            }
+
+            const epicData = [
+                ["왕실의 마법 가면", '<path d="M16 22c0-8 8-12 16-12s16 4 16 12c0 14-8 26-16 30-8-4-16-16-16-30z" fill="#581c87" stroke="#e879f9" stroke-width="3"/><circle cx="24" cy="28" r="5" fill="#fef08a"/><circle cx="40" cy="28" r="5" fill="#fef08a"/>'],
+                ["빛나는 기사 검", '<path d="M32 6l8 12v30l-8 8-8-8V18z" fill="#f3e8ff" stroke="#c084fc" stroke-width="3"/><path d="M32 18v30" stroke="#f59e0b" stroke-width="3"/><circle cx="32" cy="14" r="3" fill="#f59e0b"/>'],
+                ["황금 사자 왕관", '<path d="M16 40l6-20 10 10 10-10 6 20z" fill="#d97706" stroke="#fbbf24" stroke-width="3"/><circle cx="32" cy="20" r="4" fill="#ef4444"/><circle cx="22" cy="24" r="3" fill="#3b82f6"/><circle cx="42" cy="24" r="3" fill="#3b82f6"/>'],
+                ["마법사의 수정구", '<circle cx="32" cy="28" r="16" fill="#c084fc" stroke="#f3e8ff" stroke-width="3" filter="drop-shadow(0 0 12px #a855f7)"/><path d="M20 46h24l-4 10H24z" fill="#78350f" stroke="#b45309" stroke-width="2"/>'],
+                ["용기사의 방패", '<path d="M16 16h32l-4 24-12 8-12-8z" fill="#991b1b" stroke="#f87171" stroke-width="3"/><path d="M32 20l6 10h8l-6 6 2 8-8-6-8 6 2-8-6-6h8z" fill="#fbbf24"/>'],
+                ["정령왕의 홀", '<path d="M28 44h8v14h-8z" fill="#b45309"/><circle cx="32" cy="20" r="14" fill="#047857" stroke="#34d399" stroke-width="3"/><path d="M32 10v20M22 20h20" stroke="#6ee7b7" stroke-width="3"/>'],
+                ["어둠의 망토", '<path d="M16 14l16-6 16 6 4 36H12z" fill="#311042" stroke="#7e22ce" stroke-width="3"/><circle cx="32" cy="24" r="6" fill="#ef4444"/>'],
+                ["천상의 날개", '<path d="M32 12c-12 0-22 10-22 22 0 10 10 18 22 26 12-8 22-16 22-26 0-12-10-22-22-22z" fill="#e0f2fe" stroke="#38bdf8" stroke-width="3"/><path d="M32 16v32" stroke="#0284c7" stroke-width="3"/>'],
+                ["태양의 브로치", '<circle cx="32" cy="32" r="14" fill="#b45309" stroke="#fbbf24" stroke-width="3"/><path d="M32 10v8M32 46v8M10 32h8M46 32h8M16 16l6 6M42 42l6 6M16 48l6-6M42 22l6-6" stroke="#fbbf24" stroke-width="3" stroke-linecap="round"/>'],
+                ["달빛의 초승달 검", '<path d="M16 48c12-24 24-28 36-24-4 16-16 28-36 24z" fill="#3b82f6" stroke="#93c5fd" stroke-width="3"/><path d="M24 38l12-12" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>'],
+                ["대현자의 천체시계", '<circle cx="32" cy="32" r="20" fill="none" stroke="#c084fc" stroke-width="4"/><circle cx="32" cy="32" r="12" fill="#312e81"/><path d="M32 16v16h12" stroke="#e879f9" stroke-width="2"/>'],
+                ["공허의 차원 거울", '<ellipse cx="32" cy="32" rx="16" ry="22" fill="#0f172a" stroke="#a855f7" stroke-width="4"/><ellipse cx="32" cy="32" rx="10" ry="16" fill="#3b82f6" opacity="0.6"/>'],
+                ["폭풍의 거신 건틀릿", '<path d="M18 16h28l6 32H12z" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/><path d="M22 24h20M22 32h20" stroke="#f59e0b" stroke-width="2"/>'],
+                ["황금 그리핀의 날개", '<path d="M32 10c-14 4-22 18-18 36 12-6 20-18 18-36z" fill="#d97706" stroke="#fde047" stroke-width="3"/>'],
+                ["네크로맨서의 해골잔", '<path d="M22 16h20l-4 16c0 6-4 12-6 12s-6-6-6-12z" fill="#334155" stroke="#cbd5e1" stroke-width="3"/><circle cx="32" cy="22" r="4" fill="#f8fafc"/>'],
+                ["화염의 지옥북", '<rect x="14" y="14" width="36" height="36" rx="3" fill="#7f1d1d" stroke="#f87171" stroke-width="3"/><path d="M32 18l6 10h-12z" fill="#fbbf24"/>'],
+                ["혈월의 피안화", '<circle cx="32" cy="32" r="18" fill="#831843" stroke="#f43f5e" stroke-width="3"/><circle cx="32" cy="32" r="8" fill="#fde047"/>'],
+                ["천공의 비행선 모형", '<path d="M12 28c0-12 10-18 20-18s20 6 20 18c0 10-8 16-20 16s-20-6-20-16z" fill="#1e3a8a" stroke="#60a5fa" stroke-width="3"/><rect x="28" y="44" width="8" height="6" fill="#b45309"/>'],
+                ["서리의 심장석", '<polygon points="32,8 52,24 44,52 20,52 12,24" fill="#0369a1" stroke="#bae6fd" stroke-width="3"/><circle cx="32" cy="30" r="6" fill="#e0f2fe"/>'],
+                ["환상의 드림캐처", '<circle cx="32" cy="32" r="20" fill="none" stroke="#ec4899" stroke-width="3"/><path d="M32 12v40M12 32h40M20 20l24 24" stroke="#f472b6" stroke-width="1.5"/>'],
+                ["스타더스트 오브", '<circle cx="32" cy="32" r="20" fill="#312e81" stroke="#818cf8" stroke-width="3"/><circle cx="32" cy="32" r="8" fill="#c7d2fe"/>'],
+                ["아스트랄 링", '<circle cx="32" cy="32" r="18" fill="none" stroke="#a855f7" stroke-width="5"/><circle cx="32" cy="32" r="10" fill="#f3e8ff"/>'],
+                ["블러드 문 대거", '<path d="M32 6l8 12v26l-8 10-8-10V18z" fill="#881337" stroke="#f43f5e" stroke-width="3"/>'],
+                ["선더볼트 스태프", '<path d="M28 8l8 16-6 4 8 16h-6l-6-16 6-4-8-16z" fill="#d97706" stroke="#fde047" stroke-width="3"/>'],
+                ["프로스트 다이아", '<polygon points="32,8 50,32 32,56 14,32" fill="#0284c7" stroke="#e0f2fe" stroke-width="3"/>'],
+                ["네이처 하트", '<path d="M32 12C20 12 12 24 16 38c8 10 16 14 16 14s8-4 16-14c4-14-4-26-16-26z" fill="#166534" stroke="#4ade80" stroke-width="3"/>'],
+                ["다크니스 크라운", '<path d="M16 40l4-20 12 10 12-10 4 20z" fill="#1e1b4b" stroke="#c084fc" stroke-width="3"/>'],
+                ["솔라 플레어", '<circle cx="32" cy="32" r="16" fill="#b45309" stroke="#fde047" stroke-width="4"/>'],
+                ["팬텀 오브", '<circle cx="32" cy="32" r="20" fill="#3b0764" stroke="#e879f9" stroke-width="3"/>'],
+                ["이모탈 실드", '<path d="M16 14h32l-6 30-10 8-10-8z" fill="#475569" stroke="#e2e8f0" stroke-width="3"/>']
+            ];
+            for (let i = 0; i < epicData.length; i++) {
+                db.push({ id: `epi_${i+1}`, name: epicData[i][0], rarity: 'EPIC', svg: `<svg viewBox="0 0 64 64" class="w-12 h-12 filter drop-shadow-[0_4px_14px_rgba(168,85,247,0.9)]">${epicData[i][1]}</svg>`, rawSvg: epicData[i][1], basePower: 450 + i * 40 });
+            }
+
+            const legendaryData = [
+                ["성황의 홀", '<path d="M28 44h8v16h-8z" fill="#78350f"/><circle cx="32" cy="18" r="14" fill="#f59e0b" stroke="#fde047" stroke-width="4"/><path d="M32 10v16M24 18h16" stroke="#ffffff" stroke-width="3"/>'],
+                ["공허의 마왕갑", '<path d="M16 14l16-6 16 6 6 38H10z" fill="#1e1b4b" stroke="#a855f7" stroke-width="4"/><circle cx="32" cy="26" r="8" fill="#ef4444"/>'],
+                ["천둥의 발키리 창", '<path d="M32 4l6 14v30l-6 10-6-10V18z" fill="#38bdf8" stroke="#fde047" stroke-width="3"/><path d="M32 14v30" stroke="#ffffff" stroke-width="3"/>'],
+                ["황혼의 불사조깃털", '<path d="M32 6c-12 16-16 34-4 52 14-8 18-28 4-52z" fill="#ea580c" stroke="#fde047" stroke-width="3"/><path d="M32 16v32" stroke="#fef08a" stroke-width="2"/>'],
+                ["심판의 천칭", '<path d="M32 8v44M16 16h32M16 16l-8 16h16zM48 16l8 16H40z" fill="none" stroke="#fbbf24" stroke-width="4"/>'],
+                ["대지의 티탄 방패", '<path d="M14 14h36l-6 32-12 8-12-8z" fill="#3f6212" stroke="#a3e635" stroke-width="4"/><circle cx="32" cy="30" r="10" fill="#fde047"/>'],
+                ["세계수의 심장", '<path d="M32 8C16 16 12 32 20 44c6 8 12 12 12 12s6-4 12-12c8-12 4-28-12-36z" fill="#14532d" stroke="#4ade80" stroke-width="3"/><circle cx="32" cy="30" r="10" fill="#22c55e" filter="drop-shadow(0 0 12px #4ade80)"/>'],
+                ["차원의 균열검", '<path d="M32 4l10 14-6 28 6 14-10-6-10 6 6-14-6-28z" fill="#4338ca" stroke="#f43f5e" stroke-width="3"/><circle cx="32" cy="26" r="8" fill="#fde047" filter="drop-shadow(0 0 10px #f43f5e)"/>'],
+                ["불멸의 태양 왕관", '<path d="M14 44l6-26 12 12 12-12 6 26z" fill="#b45309" stroke="#fde047" stroke-width="4"/><circle cx="32" cy="22" r="8" fill="#ef4444" filter="drop-shadow(0 0 12px #f59e0b)"/>'],
+                ["태고의 드래곤 오브", '<path d="M32 4c-14 4-20 18-12 30 8 10 12 18 12 26 0-8 4-16 12-26 8-12 2-26-12-30z" fill="#7c2d12" stroke="#f59e0b" stroke-width="4"/><circle cx="32" cy="32" r="10" fill="#ef4444" filter="drop-shadow(0 0 10px #f59e0b)"/>']
+            ];
+            for (let i = 0; i < legendaryData.length; i++) {
+                db.push({ id: `leg_${i+1}`, name: legendaryData[i][0], rarity: 'LEGENDARY', svg: `<svg viewBox="0 0 64 64" class="w-12 h-12 filter drop-shadow-[0_0_18px_rgba(245,158,11,1)]">${legendaryData[i][1]}</svg>`, rawSvg: legendaryData[i][1], basePower: 1500 + i * 150 });
+            }
+
+            const mythicData = [
+                ["시간의 모래시계 코어", '<circle cx="32" cy="32" r="26" fill="#78350f" stroke="#fbbf24" stroke-width="4"/><path d="M20 16h24M20 48h24M24 16l16 32M40 16L24 48" stroke="#fde047" stroke-width="3"/>'],
+                ["차원 파괴의 건틀릿", '<path d="M14 14h36l8 36H6z" fill="#7f1d1d" stroke="#fde047" stroke-width="4"/><path d="M20 24h24M20 34h24" stroke="#f87171" stroke-width="3"/>'],
+                ["만물의 근원 오라브", '<circle cx="32" cy="32" r="26" fill="#065f46" stroke="#fde047" stroke-width="4"/><circle cx="32" cy="32" r="16" fill="#10b981" filter="drop-shadow(0 0 20px #34d399)"/><path d="M32 10c12 12 12 32 0 44-12-12-12-32 0-44z" fill="#fef08a"/>'],
+                ["우주 창조의 핵", '<circle cx="32" cy="32" r="26" fill="#311042" stroke="#fde047" stroke-width="4"/><circle cx="32" cy="32" r="16" fill="#e11d48" filter="drop-shadow(0 0 20px #e11d48)"/><path d="M32 10v44M10 32h44" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>'],
+                ["태초의 아티팩트", '<polygon points="32,2 44,20 62,26 48,42 52,60 32,50 12,60 16,42 2,26 20,20" fill="#991b1b" stroke="#fde047" stroke-width="4"/><circle cx="32" cy="32" r="14" fill="#fef08a" filter="drop-shadow(0 0 16px #ffffff)"/>'],
+                ["인피니티 크라운", '<path d="M14 44l6-28 12 14 12-14 6 28z" fill="#7c2d12" stroke="#fde047" stroke-width="4"/><circle cx="32" cy="22" r="8" fill="#f43f5e" filter="drop-shadow(0 0 12px #fff)"/>'],
+                ["이터니티 하트", '<path d="M32 10C18 10 12 24 18 42c8 10 14 14 14 14s6-4 14-14c6-18 0-32-14-32z" fill="#881337" stroke="#fde047" stroke-width="4"/><circle cx="32" cy="28" r="10" fill="#fef08a" filter="drop-shadow(0 0 14px #f43f5e)"/>'],
+                ["사룡", '<g><circle cx="32" cy="32" r="28" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="4 2"/><path d="M12 32c0-12 8-20 20-20s20 8 20 20-8 20-20 20-20-8-20-20z" fill="#0f172a" stroke="#e11d48" stroke-width="2"/><path d="M22 18l6 10-8 4z" fill="#ef4444"/><path d="M42 18l-6 10 8 4z" fill="#3b82f6"/><path d="M32 12l4 8h-8z" fill="#f8fafc"/><path d="M32 52l-4-8h8z" fill="#1e293b"/><circle cx="32" cy="32" r="10" fill="#fbbf24" filter="drop-shadow(0 0 12px #fde047)"/><circle cx="32" cy="32" r="4" fill="#ffffff"/></g>']
+            ];
+            for (let i = 0; i < mythicData.length; i++) {
+                db.push({ id: `myt_${i+1}`, name: mythicData[i][0], rarity: 'MYTHIC', svg: `<svg viewBox="0 0 64 64" class="w-12 h-12 filter drop-shadow-[0_0_22px_rgba(244,63,94,1)]">${mythicData[i][1]}</svg>`, rawSvg: mythicData[i][1], basePower: 5000 + i * 500 });
+            }
+
+            ALL_TREASURES_DATABASE = db;
+        }
+
+        function getEvolutionMeta(baseTreasure, stage) {
+            if (baseTreasure.rarity === 'COMMON' || baseTreasure.rarity === 'RARE' || baseTreasure.rarity === 'EPIC') {
+                return { name: baseTreasure.name, svg: baseTreasure.svg, rawSvg: baseTreasure.rawSvg };
+            }
+            if (stage === 0) return { name: baseTreasure.name, svg: baseTreasure.svg, rawSvg: baseTreasure.rawSvg };
+            else if (stage === 1) return { 
+                name: `각성된 ${baseTreasure.name}`, 
+                svg: `<svg viewBox="0 0 64 64" class="w-12 h-12 filter drop-shadow-[0_0_12px_rgba(56,189,248,0.9)]"><polygon points="32,2 42,20 62,24 48,38 52,58 32,48 12,58 16,38 2,24 22,20" fill="#0284c7" stroke="#38bdf8" stroke-width="2.5"/><circle cx="32" cy="32" r="12" fill="#bae6fd"/></svg>`,
+                rawSvg: '<polygon points="32,2 42,20 62,24 48,38 52,58 32,48 12,58 16,38 2,24 22,20" fill="#0284c7" stroke="#38bdf8" stroke-width="2.5"/><circle cx="32" cy="32" r="12" fill="#bae6fd"/>'
+            };
+            else if (stage === 2) return { 
+                name: `초월된 ${baseTreasure.name}`, 
+                svg: `<svg viewBox="0 0 64 64" class="w-12 h-12 filter drop-shadow-[0_0_15px_rgba(192,132,252,0.9)]"><polygon points="32,2 46,16 62,32 46,48 32,62 18,48 2,32 18,16" fill="#7e22ce" stroke="#c084fc" stroke-width="2.5"/><circle cx="32" cy="32" r="14" fill="#fef08a"/></svg>`,
+                rawSvg: '<polygon points="32,2 46,16 62,32 46,48 32,62 18,48 2,32 18,16" fill="#7e22ce" stroke="#c084fc" stroke-width="2.5"/><circle cx="32" cy="32" r="14" fill="#fef08a"/>'
+            };
+            else return { 
+                name: `태초의 ${baseTreasure.name}`, 
+                svg: `<svg viewBox="0 0 64 64" class="w-12 h-12 filter drop-shadow-[0_0_20px_rgba(251,191,36,1)]"><polygon points="32,0 40,18 60,20 45,34 50,54 32,44 14,54 19,34 4,20 24,18" fill="#b45309" stroke="#fbbf24" stroke-width="3"/><circle cx="32" cy="32" r="16" fill="#e11d48" filter="drop-shadow(0 0 10px #fff)"/></svg>`,
+                rawSvg: '<polygon points="32,0 40,18 60,20 45,34 50,54 32,44 14,54 19,34 4,20 24,18" fill="#b45309" stroke="#fbbf24" stroke-width="3"/><circle cx="32" cy="32" r="16" fill="#e11d48"/>'
+            };
+        }
+
+        function sortInventory() {
+            const rarityOrder = { MYTHIC: 5, LEGENDARY: 4, EPIC: 3, RARE: 2, COMMON: 1 };
+            gameState.inventory.sort((a, b) => {
+                if (a.evolutionStage !== b.evolutionStage) return b.evolutionStage - a.evolutionStage;
+                if (b.enhanceLevel !== a.enhanceLevel) return b.enhanceLevel - a.enhanceLevel;
+                const baseA = ALL_TREASURES_DATABASE.find(t => t.id === a.baseId);
+                const baseB = ALL_TREASURES_DATABASE.find(t => t.id === b.baseId);
+                const rA = rarityOrder[baseA ? baseA.rarity : 'COMMON'];
+                const rB = rarityOrder[baseB ? baseB.rarity : 'COMMON'];
+                if (rA !== rB) return rB - rA;
+                return (baseB ? baseB.basePower : 0) - (baseA ? baseA.basePower : 0);
+            });
+        }
+
+        function initGame() {
+            generateTreasureDatabase();
+            const saved = localStorage.getItem(GAME_DATA_KEY);
+            if (saved) {
+                try {
+                    gameState = JSON.parse(saved);
+                    if (gameState.gold === undefined) gameState.gold = 20000;
+                    if (!gameState.usedTradeCodes) gameState.usedTradeCodes = [];
+                    if (gameState.recordDungeonFloor === undefined) gameState.recordDungeonFloor = 1;
+                    gameState.inventory.forEach(item => {
+                        if (item.enhanceLevel === undefined) item.enhanceLevel = 0;
+                        if (item.evolutionStage === undefined) item.evolutionStage = 0;
+                    });
+                } catch (e) {
+                    giveStartingTreasures();
+                }
+            } else {
+                giveStartingTreasures();
+            }
+            sortInventory();
+            validateActiveTreasure();
+            switchTab('gacha');
+            updateHeader();
+        }
+
+        function validateActiveTreasure() {
+            if (gameState.inventory.length > 0) {
+                const exists = gameState.inventory.some(i => i.uid === gameState.activeTreasureUid);
+                if (!exists) {
+                    gameState.activeTreasureUid = gameState.inventory[0].uid;
+                }
+            } else {
+                gameState.activeTreasureUid = null;
+            }
+        }
+
+        function giveStartingTreasures() {
+            gameState.gold = 20000;
+            gameState.gems = 800;
+            gameState.usedTradeCodes = [];
+            gameState.recordDungeonFloor = 1;
+            const starters = [ALL_TREASURES_DATABASE[0], ALL_TREASURES_DATABASE[45], ALL_TREASURES_DATABASE[75]];
+            starters.forEach(t => {
+                gameState.inventory.push({
+                    uid: `init_${t.id}_${Date.now()}_${Math.random()}`,
+                    baseId: t.id,
+                    enhanceLevel: 0,
+                    evolutionStage: 0
+                });
+                if (!gameState.codexUnlocked.includes(t.id)) gameState.codexUnlocked.push(t.id);
+            });
+            saveGame();
+        }
+
+        function saveGame() {
+            sortInventory();
+            validateActiveTreasure();
+            localStorage.setItem(GAME_DATA_KEY, JSON.stringify(gameState));
+            updateHeader();
+        }
+
+        function updateHeader() {
+            document.getElementById('header-gold').innerText = gameState.gold.toLocaleString();
+            document.getElementById('header-gems').innerText = gameState.gems.toLocaleString();
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            if (!toast) return;
+            toast.innerText = message;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+        }
+
+        let currentTab = 'gacha';
+        let currentInvFilter = 'evolution';
+        let currentInvRarity = 'COMMON';
+        let inventorySearchQuery = '';
+
+        function switchTab(tabName, jumpUid = null) {
+            if (window.activeBattleAnimFrame) {
+                cancelAnimationFrame(window.activeBattleAnimFrame);
+                window.activeBattleAnimFrame = null;
+            }
+
+            currentTab = tabName;
+            ['gacha', 'inventory', 'codex', 'upgrade', 'battle', 'trade'].forEach(t => {
+                const btn = document.getElementById(`nav-btn-${t}`);
+                if (btn) {
+                    if (t === tabName) {
+                        btn.classList.remove('text-slate-400');
+                        btn.classList.add('text-amber-400');
+                    } else {
+                        btn.classList.remove('text-amber-400');
+                        btn.classList.add('text-slate-400');
+                    }
+                }
+            });
+
+            const main = document.getElementById('main-content');
+            if (!main) return;
+            main.innerHTML = '';
+
+            if (tabName === 'gacha') renderGachaView(main);
+            else if (tabName === 'inventory') renderInventoryView(main, currentInvFilter, currentInvRarity, jumpUid);
+            else if (tabName === 'codex') renderCodexView(main, 'COMMON');
+            else if (tabName === 'upgrade') renderUpgradeView(main);
+            else if (tabName === 'battle') renderBattleArenaView(main);
+            else if (tabName === 'trade') renderTradeView(main);
+        }
+
+        function renderGachaView(container) {
+            container.innerHTML = `
+                <div class="p-4 flex flex-col items-center justify-center min-h-[75vh]">
+                    <div class="text-center mb-4">
+                        <h2 class="text-xl font-bold text-amber-300 font-['Jua'] tracking-wider">차원 보물 소환진</h2>
+                    </div>
+
+                    <div class="relative w-56 h-56 flex items-center justify-center my-4 cursor-pointer group" onclick="performGacha(1)">
+                        <div class="absolute inset-0 rounded-full border border-dashed border-amber-500/40 portal-ring pointer-events-none"></div>
+                        <div class="absolute inset-4 rounded-full border-2 border-purple-500/50 portal-ring-rev pointer-events-none"></div>
+                        <div class="absolute inset-10 rounded-full bg-gradient-to-tr from-amber-600/30 via-purple-600/30 to-indigo-600/40 blur-xl group-hover:scale-110 transition duration-700 pointer-events-none"></div>
+                        
+                        <div class="w-32 h-32 rounded-full bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950 border-2 border-amber-400/80 shadow-[0_0_35px_rgba(245,158,11,0.5)] flex flex-col items-center justify-center relative z-10 floating">
+                            <svg viewBox="0 0 24 24" class="w-14 h-14 fill-amber-400 filter drop-shadow-[0_0_12px_rgba(255,215,0,0.8)]"><path d="M12 2L2 7L12 12L22 7L12 2M2 17L12 22L22 17V12L12 17L2 12V17Z"/></svg>
+                            <span class="text-[10px] font-bold text-amber-300 tracking-widest mt-1">PORTAL</span>
+                        </div>
+                    </div>
+
+                    <div class="w-full space-y-3 max-w-xs mt-4">
+                        <button onclick="performGacha(1)" class="w-full py-3.5 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 text-slate-950 font-bold rounded-2xl shadow-lg flex items-center justify-center space-x-2 transition transform active:scale-95 border border-amber-300/40">
+                            <span>✨ 1회 뽑기</span>
+                            <span class="text-xs bg-black/25 px-2.5 py-0.5 rounded-lg text-amber-100 font-mono">🪙 500 골드</span>
+                        </button>
+                        <button onclick="performGacha(10)" class="w-full py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 hover:from-purple-500 text-white font-bold rounded-2xl shadow-lg flex items-center justify-center space-x-2 transition transform active:scale-95 border border-purple-400/40">
+                            <span>🌟 10회 뽑기</span>
+                            <span class="text-xs bg-black/25 px-2.5 py-0.5 rounded-lg text-purple-100 font-mono">🪙 5,000 골드</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function performGacha(count) {
+            const cost = count === 1 ? 500 : 5000;
+            if (gameState.gold < cost) {
+                showToast("❌ 골드가 부족합니다!");
+                return;
+            }
+            gameState.gold -= cost;
+
+            const results = [];
+            for (let i = 0; i < count; i++) {
+                const rand = Math.random();
+                let chosenRarityKey = 'COMMON';
+                let cumulative = 0;
+                for (const [rKey, rObj] of Object.entries(RARITIES)) {
+                    cumulative += rObj.chance;
+                    if (rand <= cumulative) {
+                        chosenRarityKey = rKey;
+                        break;
+                    }
+                }
+                const pool = ALL_TREASURES_DATABASE.filter(t => t.rarity === chosenRarityKey && t.name !== '사룡');
+                const picked = pool[Math.floor(Math.random() * pool.length)];
+                
+                results.push(picked);
+                gameState.inventory.push({
+                    uid: `item_${picked.id}_${Date.now()}_${Math.random()}`,
+                    baseId: picked.id,
+                    enhanceLevel: 0,
+                    evolutionStage: 0
+                });
+                if (!gameState.codexUnlocked.includes(picked.id)) gameState.codexUnlocked.push(picked.id);
+            }
+
+            saveGame();
+            showGachaResultModal(results);
+        }
+
+        function showGachaResultModal(results) {
+            const modal = document.getElementById('modal-container');
+            modal.classList.remove('hidden');
+
+            let html = `
+                <div class="glass-panel w-full max-w-sm p-5 rounded-3xl border border-slate-700/80 flex flex-col items-center max-h-[85vh] overflow-y-auto shadow-2xl">
+                    <h3 class="text-lg font-bold text-amber-300 font-['Jua'] mb-3">✨ 보물 소환 결과 ✨</h3>
+                    <div class="grid grid-cols-2 gap-2.5 w-full my-2">
+            `;
+
+            results.forEach(t => {
+                const rInfo = RARITIES[t.rarity];
+                html += `
+                    <div class="treasure-card-frame ${rInfo.bg} border ${rInfo.border} p-3 flex flex-col items-center justify-center text-center">
+                        <div class="treasure-icon-box bg-slate-900/80 mb-1.5">${t.svg}</div>
+                        <span class="text-[10px] ${rInfo.text} font-bold truncate w-full">${t.name}</span>
+                        <span class="text-[9px] text-slate-400 mt-0.5">${rInfo.name.split(' ')[0]}</span>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                    <button onclick="closeModal()" class="mt-4 w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition shadow-lg active:scale-95">확인</button>
+                </div>
+            `;
+            modal.innerHTML = html;
+        }
+
+        function closeModal() {
+            document.getElementById('modal-container').classList.add('hidden');
+        }
+
+        function renderInventoryView(container, filterType = 'evolution', activeRarityTab = 'COMMON', jumpUid = null) {
+            currentInvFilter = filterType;
+            currentInvRarity = activeRarityTab;
+
+            const groupedMap = new Map();
+            gameState.inventory.forEach(item => {
+                const key = `${item.baseId}_${item.enhanceLevel}_${item.evolutionStage}`;
+                if (groupedMap.has(key)) {
+                    groupedMap.get(key).count += 1;
+                } else {
+                    groupedMap.set(key, { ...item, count: 1 });
+                }
+            });
+
+            let groupedList = Array.from(groupedMap.values());
+
+            if (filterType === 'evolution') {
+                groupedList = groupedList.filter(item => item.evolutionStage > 0);
+            } else if (filterType === 'rarity') {
+                groupedList = groupedList.filter(item => {
+                    const b = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+                    return b && b.rarity === activeRarityTab;
+                });
+            }
+
+            if (inventorySearchQuery && inventorySearchQuery.trim() !== '') {
+                const q = inventorySearchQuery.toLowerCase().trim();
+                groupedList = groupedList.filter(item => {
+                    const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+                    const evo = getEvolutionMeta(base, item.evolutionStage);
+                    const rInfo = RARITIES[base.rarity];
+                    return evo.name.toLowerCase().includes(q) || 
+                           base.name.toLowerCase().includes(q) || 
+                           rInfo.name.toLowerCase().includes(q) ||
+                           (`+${item.enhanceLevel}`).includes(q);
+                });
+            }
+
+            groupedList.sort((a, b) => {
+                if (a.evolutionStage !== b.evolutionStage) return b.evolutionStage - a.evolutionStage;
+                return b.enhanceLevel - a.enhanceLevel;
+            });
+
+            let html = `
+                <div class="p-3 flex flex-col min-h-[75vh]">
+                    <div class="flex items-center justify-between mb-2 px-1">
+                        <h2 class="text-base font-bold text-amber-300 font-['Jua']">보물 보관함</h2>
+                        <span class="text-xs text-slate-400">종류: ${groupedList.length}종 (총 ${gameState.inventory.length}개)</span>
+                    </div>
+
+                    <div class="mb-2">
+                        <input type="text" id="inventory-search-input" value="${inventorySearchQuery}" placeholder="🔍 보물 이름, 등급, 강화수치 검색..." oninput="onInventorySearchInput(this)" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 font-mono">
+                    </div>
+
+                    <div class="flex space-x-1 overflow-x-auto pb-2 mb-2 flex-shrink-0 text-xs">
+                        <button onclick="renderInventoryView(document.getElementById('main-content'), 'evolution')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${filterType === 'evolution' ? 'bg-purple-500 text-white shadow' : 'bg-slate-800/80 text-slate-300'}">✨ 진화 보물</button>
+                        <button onclick="renderInventoryView(document.getElementById('main-content'), 'rarity', 'COMMON')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${filterType === 'rarity' && activeRarityTab === 'COMMON' ? 'bg-slate-600 text-white shadow' : 'bg-slate-800/80 text-slate-300'}">일반</button>
+                        <button onclick="renderInventoryView(document.getElementById('main-content'), 'rarity', 'RARE')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${filterType === 'rarity' && activeRarityTab === 'RARE' ? 'bg-blue-600 text-white shadow' : 'bg-slate-800/80 text-slate-300'}">희귀</button>
+                        <button onclick="renderInventoryView(document.getElementById('main-content'), 'rarity', 'EPIC')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${filterType === 'rarity' && activeRarityTab === 'EPIC' ? 'bg-purple-600 text-white shadow' : 'bg-slate-800/80 text-slate-300'}">영웅</button>
+                        <button onclick="renderInventoryView(document.getElementById('main-content'), 'rarity', 'LEGENDARY')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${filterType === 'rarity' && activeRarityTab === 'LEGENDARY' ? 'bg-amber-600 text-white shadow' : 'bg-slate-800/80 text-slate-300'}">전설</button>
+                        <button onclick="renderInventoryView(document.getElementById('main-content'), 'rarity', 'MYTHIC')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${filterType === 'rarity' && activeRarityTab === 'MYTHIC' ? 'bg-rose-600 text-white shadow' : 'bg-slate-800/80 text-slate-300'}">신화</button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5 pb-24" id="inventory-grid">
+            `;
+
+            if (groupedList.length === 0) {
+                html += `
+                    <div class="col-span-2 flex flex-col items-center justify-center py-16 text-slate-500">
+                        <span class="text-3xl mb-2">📭</span>
+                        <p class="text-xs">해당 조건의 보물이 없습니다.</p>
+                    </div>
+                `;
+            } else {
+                groupedList.forEach(item => {
+                    const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+                    if (!base) return;
+                    const rInfo = RARITIES[base.rarity];
+                    const evoMeta = getEvolutionMeta(base, item.evolutionStage);
+                    const power = Math.floor(base.basePower * Math.pow(1.15, item.enhanceLevel) * Math.pow(1.5, item.evolutionStage));
+                    
+                    let customSellPrice = 100;
+                    if (base.rarity === 'EPIC') customSellPrice = 1000;
+                    else if (base.rarity === 'RARE') customSellPrice = 300;
+                    else if (base.rarity === 'LEGENDARY') customSellPrice = 50000;
+                    else if (base.rarity === 'MYTHIC') customSellPrice = 200000;
+                    const sellPrice = Math.floor(customSellPrice * (1 + item.enhanceLevel * 0.05) * Math.pow(1.5, item.evolutionStage));
+
+                    const stageClass = `evo-stage-${item.evolutionStage}`;
+                    const isJumpTarget = jumpUid && item.uid === jumpUid;
+
+                    html += `
+                        <div id="inv-card-${item.uid}" onclick="openSellModal('${item.uid}')" class="treasure-card-frame ${rInfo.bg} ${stageClass} cursor-pointer hover:scale-[1.02] transition ${isJumpTarget ? 'ring-4 ring-amber-400 scale-105' : ''}">
+                            <div class="absolute top-2 left-2 flex items-center space-x-1">
+                                ${item.evolutionStage > 0 ? `<span class="bg-purple-600 text-white px-1.5 py-0.5 rounded-md text-[9px] font-bold shadow">[${item.evolutionStage}진]</span>` : ''}
+                                ${item.count > 1 ? `<span class="bg-amber-500 text-slate-950 px-1.5 py-0.5 rounded-md text-[9px] font-extrabold shadow">x${item.count}</span>` : ''}
+                            </div>
+                            <div class="absolute top-2 right-2 bg-black/40 px-1.5 py-0.5 rounded-md text-[9px] font-mono text-amber-300 font-bold">+${item.enhanceLevel}</div>
+                            
+                            <div class="treasure-icon-box bg-slate-900/80 my-auto">${evoMeta.svg}</div>
+                            <div class="w-full text-center">
+                                <div class="text-[11px] ${rInfo.text} font-bold truncate">${evoMeta.name}</div>
+                                <div class="text-[10px] text-amber-400 font-mono mt-0.5">전력: ${power.toLocaleString()}</div>
+                                <div class="text-[9px] text-slate-300 font-semibold mt-0.5">${base.name === '사룡' ? '🔒 판매 불가' : `판매: 🪙${sellPrice.toLocaleString()}`}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+
+            if (jumpUid) {
+                setTimeout(() => {
+                    const el = document.getElementById(`inv-card-${jumpUid}`);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 100);
+            }
+        }
+
+        function onInventorySearchInput(input) {
+            inventorySearchQuery = input.value;
+            const gridContainer = document.getElementById('inventory-grid');
+            if (!gridContainer) return;
+
+            const groupedMap = new Map();
+            gameState.inventory.forEach(item => {
+                const key = `${item.baseId}_${item.enhanceLevel}_${item.evolutionStage}`;
+                if (groupedMap.has(key)) {
+                    groupedMap.get(key).count += 1;
+                } else {
+                    groupedMap.set(key, { ...item, count: 1 });
+                }
+            });
+
+            let groupedList = Array.from(groupedMap.values());
+            if (currentInvFilter === 'evolution') {
+                groupedList = groupedList.filter(item => item.evolutionStage > 0);
+            } else if (currentInvFilter === 'rarity') {
+                groupedList = groupedList.filter(item => {
+                    const b = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+                    return b && b.rarity === currentInvRarity;
+                });
+            }
+
+            if (inventorySearchQuery && inventorySearchQuery.trim() !== '') {
+                const q = inventorySearchQuery.toLowerCase().trim();
+                groupedList = groupedList.filter(item => {
+                    const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+                    const evo = getEvolutionMeta(base, item.evolutionStage);
+                    const rInfo = RARITIES[base.rarity];
+                    return evo.name.toLowerCase().includes(q) || 
+                           base.name.toLowerCase().includes(q) || 
+                           rInfo.name.toLowerCase().includes(q) ||
+                           (`+${item.enhanceLevel}`).includes(q);
+                });
+            }
+
+            groupedList.sort((a, b) => {
+                if (a.evolutionStage !== b.evolutionStage) return b.evolutionStage - a.evolutionStage;
+                return b.enhanceLevel - a.enhanceLevel;
+            });
+
+            let html = '';
+            if (groupedList.length === 0) {
+                html = `
+                    <div class="col-span-2 flex flex-col items-center justify-center py-16 text-slate-500">
+                        <span class="text-3xl mb-2">📭</span>
+                        <p class="text-xs">해당 조건의 보물이 없습니다.</p>
+                    </div>
+                `;
+            } else {
+                groupedList.forEach(item => {
+                    const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+                    if (!base) return;
+                    const rInfo = RARITIES[base.rarity];
+                    const evoMeta = getEvolutionMeta(base, item.evolutionStage);
+                    const power = Math.floor(base.basePower * Math.pow(1.15, item.enhanceLevel) * Math.pow(1.5, item.evolutionStage));
+                    
+                    let customSellPrice = 100;
+                    if (base.rarity === 'EPIC') customSellPrice = 1000;
+                    else if (base.rarity === 'RARE') customSellPrice = 300;
+                    else if (base.rarity === 'LEGENDARY') customSellPrice = 50000;
+                    else if (base.rarity === 'MYTHIC') customSellPrice = 200000;
+                    const sellPrice = Math.floor(customSellPrice * (1 + item.enhanceLevel * 0.05) * Math.pow(1.5, item.evolutionStage));
+                    const stageClass = `evo-stage-${item.evolutionStage}`;
+
+                    html += `
+                        <div id="inv-card-${item.uid}" onclick="openSellModal('${item.uid}')" class="treasure-card-frame ${rInfo.bg} ${stageClass} cursor-pointer hover:scale-[1.02] transition">
+                            <div class="absolute top-2 left-2 flex items-center space-x-1">
+                                ${item.evolutionStage > 0 ? `<span class="bg-purple-600 text-white px-1.5 py-0.5 rounded-md text-[9px] font-bold shadow">[${item.evolutionStage}진]</span>` : ''}
+                                ${item.count > 1 ? `<span class="bg-amber-500 text-slate-950 px-1.5 py-0.5 rounded-md text-[9px] font-extrabold shadow">x${item.count}</span>` : ''}
+                            </div>
+                            <div class="absolute top-2 right-2 bg-black/40 px-1.5 py-0.5 rounded-md text-[9px] font-mono text-amber-300 font-bold">+${item.enhanceLevel}</div>
+                            
+                            <div class="treasure-icon-box bg-slate-900/80 my-auto">${evoMeta.svg}</div>
+                            <div class="w-full text-center">
+                                <div class="text-[11px] ${rInfo.text} font-bold truncate">${evoMeta.name}</div>
+                                <div class="text-[10px] text-amber-400 font-mono mt-0.5">전력: ${power.toLocaleString()}</div>
+                                <div class="text-[9px] text-slate-300 font-semibold mt-0.5">${base.name === '사룡' ? '🔒 판매 불가' : `판매: 🪙${sellPrice.toLocaleString()}`}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            gridContainer.innerHTML = html;
+        }
+
+        function openSellModal(uid) {
+            const item = gameState.inventory.find(i => i.uid === uid);
+            if (!item) return;
+            const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+            const rInfo = RARITIES[base.rarity];
+            const evoMeta = getEvolutionMeta(base, item.evolutionStage);
+            const power = Math.floor(base.basePower * Math.pow(1.15, item.enhanceLevel) * Math.pow(1.5, item.evolutionStage));
+            
+            let customSellPrice = 100;
+            if (base.rarity === 'EPIC') customSellPrice = 1000;
+            else if (base.rarity === 'RARE') customSellPrice = 300;
+            else if (base.rarity === 'LEGENDARY') customSellPrice = 50000;
+            else if (base.rarity === 'MYTHIC') customSellPrice = 200000;
+            const sellPrice = Math.floor(customSellPrice * (1 + item.enhanceLevel * 0.05) * Math.pow(1.5, item.evolutionStage));
+
+            const isUnsellable = base.name === '사룡';
+
+            const modal = document.getElementById('modal-container');
+            modal.classList.remove('hidden');
+            modal.innerHTML = `
+                <div class="glass-panel w-full max-w-xs p-5 rounded-3xl border border-slate-700/80 flex flex-col items-center text-center shadow-2xl">
+                    <h3 class="text-sm font-bold text-amber-300 mb-3">보물 관리</h3>
+                    <div class="treasure-icon-box bg-slate-900/90 mb-2 ${rInfo.bg} evo-stage-${item.evolutionStage}">${evoMeta.svg}</div>
+                    <div class="text-xs font-bold ${rInfo.text} mb-1">${evoMeta.name}</div>
+                    <div class="text-[11px] text-slate-300 mb-1">강화: +${item.enhanceLevel} | 진화: ${item.evolutionStage}단계</div>
+                    <div class="text-xs text-amber-400 font-mono mb-3">전력: ${power.toLocaleString()}</div>
+                    
+                    <button onclick="setRepresentative('${item.uid}')" class="w-full py-2.5 mb-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs transition">
+                        ⭐ 전투용 대표 보물로 장착
+                    </button>
+
+                    ${isUnsellable ? `
+                        <div class="bg-rose-950/40 p-2.5 rounded-xl w-full mb-3 text-center border border-rose-500/30">
+                            <span class="text-xs text-rose-300 font-bold">🚫 '사룡'은 판매가 불가능한 신화 보물입니다.</span>
+                        </div>
+                        <button onclick="closeModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition">닫기</button>
+                    ` : `
+                        <div class="bg-black/30 p-2.5 rounded-xl w-full mb-3 text-center">
+                            <span class="text-xs text-slate-400">판매 획득 골드:</span>
+                            <div class="text-sm font-bold text-amber-300 mt-0.5">🪙 ${sellPrice.toLocaleString()}</div>
+                        </div>
+                        <div class="flex space-x-2 w-full">
+                            <button onclick="closeModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition">취소</button>
+                            <button onclick="confirmSell('${item.uid}', ${sellPrice})" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition">판매하기</button>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function setRepresentative(uid) {
+            gameState.activeTreasureUid = uid;
+            saveGame();
+            closeModal();
+            showToast("⭐ 전투 대표 보물이 장착되었습니다!");
+            switchTab('battle');
+        }
+
+        function confirmSell(uid, price) {
+            const item = gameState.inventory.find(i => i.uid === uid);
+            if (item) {
+                const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+                if (base && base.name === '사룡') {
+                    showToast("❌ '사룡'은 판매할 수 없습니다!");
+                    closeModal();
+                    return;
+                }
+            }
+
+            const idx = gameState.inventory.findIndex(i => i.uid === uid);
+            if (idx !== -1) {
+                gameState.inventory.splice(idx, 1);
+                gameState.gold += price;
+                saveGame();
+                closeModal();
+                showToast(`🪙 ${price.toLocaleString()} 골드에 판매했습니다!`);
+                renderInventoryView(document.getElementById('main-content'), currentInvFilter, currentInvRarity);
+            }
+        }
+
+        function renderCodexView(container, activeRarity = 'COMMON') {
+            const list = ALL_TREASURES_DATABASE.filter(t => t.rarity === activeRarity);
+            const unlockedCount = list.filter(t => gameState.codexUnlocked.includes(t.id)).length;
+
+            let html = `
+                <div class="p-3 flex flex-col h-full">
+                    <div class="flex items-center justify-between mb-2 px-1">
+                        <h2 class="text-base font-bold text-amber-300 font-['Jua']">보물 도감</h2>
+                        <span class="text-xs text-slate-400">${unlockedCount} / ${list.length} 수집</span>
+                    </div>
+
+                    <div class="flex space-x-1 overflow-x-auto pb-2 mb-2 flex-shrink-0 text-xs">
+                        <button onclick="renderCodexView(document.getElementById('main-content'), 'COMMON')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${activeRarity === 'COMMON' ? 'bg-slate-600 text-white' : 'bg-slate-800/80 text-slate-300'}">일반</button>
+                        <button onclick="renderCodexView(document.getElementById('main-content'), 'RARE')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${activeRarity === 'RARE' ? 'bg-blue-600 text-white' : 'bg-slate-800/80 text-slate-300'}">희귀</button>
+                        <button onclick="renderCodexView(document.getElementById('main-content'), 'EPIC')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${activeRarity === 'EPIC' ? 'bg-purple-600 text-white' : 'bg-slate-800/80 text-slate-300'}">영웅</button>
+                        <button onclick="renderCodexView(document.getElementById('main-content'), 'LEGENDARY')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${activeRarity === 'LEGENDARY' ? 'bg-amber-600 text-white' : 'bg-slate-800/80 text-slate-300'}">전설</button>
+                        <button onclick="renderCodexView(document.getElementById('main-content'), 'MYTHIC')" class="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition ${activeRarity === 'MYTHIC' ? 'bg-rose-600 text-white' : 'bg-slate-800/80 text-slate-300'}">신화</button>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto grid grid-cols-2 gap-2.5 pb-20">
+            `;
+
+            list.forEach(t => {
+                const isUnlocked = gameState.codexUnlocked.includes(t.id);
+                const rInfo = RARITIES[t.rarity];
+
+                if (isUnlocked) {
+                    html += `
+                        <div class="treasure-card-frame ${rInfo.bg} border ${rInfo.border} p-3 flex flex-col items-center justify-center text-center">
+                            <div class="treasure-icon-box bg-slate-900/80 mb-1.5">${t.svg}</div>
+                            <span class="text-[11px] ${rInfo.text} font-bold truncate w-full">${t.name}</span>
+                            <span class="text-[9px] text-amber-400 font-mono mt-0.5">기본 전력: ${t.basePower}</span>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="treasure-card-frame bg-slate-900/50 border border-slate-800 p-3 flex flex-col items-center justify-center text-center opacity-60">
+                            <div class="treasure-icon-box bg-slate-950 mb-1.5 flex items-center justify-center">
+                                <span class="text-xl">🔒</span>
+                            </div>
+                            <span class="text-[11px] text-slate-500 font-bold">???</span>
+                            <span class="text-[9px] text-slate-600 mt-0.5">미발견 보물</span>
+                        </div>
+                    `;
+                }
+            });
+
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+
+        /* --- UNIQUE HARDCORE RECIPES FOR LEGENDARY & MYTHIC ONLY --- */
+        function getHardcoreRecipe(baseName, targetStage) {
+            // --- MYTHIC ---
+            if (baseName === "시간의 모래시계 코어") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "왕실의 마법 가면", stage: 0, count: 2, rarity: '영웅' }, { name: "빛바랜 엽전", stage: 0, count: 2, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "세계수의 심장", stage: 1, count: 1, rarity: '전설' }, { name: "빛나는 기사 검", stage: 0, count: 2, rarity: '영웅' }, { name: "마법사의 수정구", stage: 0, count: 2, rarity: '영웅' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "차원의 균열검", stage: 2, count: 1, rarity: '전설' }, { name: "세계수의 심장", stage: 1, count: 1, rarity: '전설' }, { name: "황금 사자 왕관", stage: 0, count: 3, rarity: '영웅' }] };
+            }
+            if (baseName === "차원 파괴의 건틀릿") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "빛나는 기사 검", stage: 0, count: 2, rarity: '영웅' }, { name: "구리 조각", stage: 0, count: 2, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "불멸의 태양 왕관", stage: 1, count: 1, rarity: '전설' }, { name: "용기사의 방패", stage: 0, count: 2, rarity: '영웅' }, { name: "어둠의 망토", stage: 0, count: 2, rarity: '영웅' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "태고의 드래곤 오브", stage: 2, count: 1, rarity: '전설' }, { name: "불멸의 태양 왕관", stage: 1, count: 1, rarity: '전설' }, { name: "마법사의 수정구", stage: 0, count: 3, rarity: '영웅' }] };
+            }
+            if (baseName === "만물의 근원 오라브") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "용기사의 방패", stage: 0, count: 3, rarity: '영웅' }, { name: "이끼 낀 밧줄", stage: 0, count: 3, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "세계수의 심장", stage: 1, count: 1, rarity: '전설' }, { name: "태고의 드래곤 오브", stage: 1, count: 1, rarity: '전설' }, { name: "정령왕의 홀", stage: 0, count: 2, rarity: '영웅' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "차원의 균열검", stage: 2, count: 1, rarity: '전설' }, { name: "태고의 드래곤 오브", stage: 2, count: 1, rarity: '전설' }, { name: "불멸의 태양 왕관", stage: 2, count: 1, rarity: '전설' }, { name: "천상의 날개", stage: 0, count: 4, rarity: '영웅' }] };
+            }
+            if (baseName === "우주 창조의 핵") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "정령왕의 홀", stage: 3, count: 1, rarity: '영웅' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "세계수의 심장", stage: 1, count: 1, rarity: '전설' }, { name: "차원의 균열검", stage: 1, count: 1, rarity: '전설' }, { name: "태양의 브로치", stage: 3, count: 1, rarity: '전설' }, { name: "고대 마법서", stage: 0, count: 1, rarity: '희귀' }, { name: "마력의 수정", stage: 3, count: 1, rarity: '희귀' }, { name: "마법 양피지", stage: 0, count: 1, rarity: '희귀' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "불멸의 태양 왕관", stage: 3, count: 1, rarity: '전설' }, { name: "차원의 균열검", stage: 3, count: 1, rarity: '전설' }, { name: "마법 양피지", stage: 0, count: 1, rarity: '희귀' }, { name: "고대 마법서", stage: 0, count: 1, rarity: '희귀' }, { name: "녹슨 열쇠", stage: 0, count: 1, rarity: '일반' }] };
+            }
+            if (baseName === "태초의 아티팩트") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "천상의 날개", stage: 3, count: 1, rarity: '전설' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "불멸의 태양 왕관", stage: 1, count: 1, rarity: '전설' }, { name: "태양의 브로치", stage: 1, count: 1, rarity: '전설' }, { name: "정령왕의 홀", stage: 1, count: 1, rarity: '전설' }, { name: "마법 양피지", stage: 0, count: 1, rarity: '희귀' }, { name: "바다의 진주", stage: 0, count: 1, rarity: '희귀' }, { name: "마력의 수정", stage: 1, count: 1, rarity: '희귀' }, { name: "천상의 날개", stage: 1, count: 1, rarity: '전설' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "태고의 드래곤 오브", stage: 3, count: 1, rarity: '전설' }, { name: "불멸의 태양 왕관", stage: 3, count: 1, rarity: '전설' }] };
+            }
+            if (baseName === "인피니티 크라운") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "황금 사자 왕관", stage: 0, count: 2, rarity: '영웅' }, { name: "황금 동전", stage: 0, count: 2, rarity: '희귀' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "불멸의 태양 왕관", stage: 1, count: 1, rarity: '전설' }, { name: "황금 사자 왕관", stage: 0, count: 2, rarity: '영웅' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "불멸의 태양 왕관", stage: 2, count: 1, rarity: '전설' }, { name: "세계수의 심장", stage: 2, count: 1, rarity: '전설' }] };
+            }
+            if (baseName === "이터니티 하트") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "네이처 하트", stage: 0, count: 2, rarity: '영웅' }, { name: "마른 허브잎", stage: 0, count: 3, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "세계수의 심장", stage: 1, count: 1, rarity: '전설' }, { name: "네이처 하트", stage: 0, count: 2, rarity: '영웅' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "세계수의 심장", stage: 2, count: 1, rarity: '전설' }, { name: "태고의 드래곤 오브", stage: 2, count: 1, rarity: '전설' }] };
+            }
+            if (baseName === "사룡") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "태고의 드래곤 오브", stage: 1, count: 1, rarity: '전설' }, { name: "빛바랜 인장", stage: 0, count: 3, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "태고의 드래곤 오브", stage: 2, count: 2, rarity: '전설' }, { name: "차원의 균열검", stage: 1, count: 1, rarity: '전설' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "태고의 드래곤 오브", stage: 2, count: 2, rarity: '전설' }, { name: "차원의 균열검", stage: 2, count: 2, rarity: '전설' }, { name: "불멸의 태양 왕관", stage: 2, count: 1, rarity: '전설' }] };
+            }
+
+            // --- LEGENDARY ---
+            if (baseName === "성황의 홀") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "왕실의 마법 가면", stage: 0, count: 1, rarity: '영웅' }, { name: "구운 점토판", stage: 0, count: 2, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "빛나는 기사 검", stage: 0, count: 1, rarity: '영웅' }, { name: "비취 보옥", stage: 0, count: 3, rarity: '희귀' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "황금 사자 왕관", stage: 0, count: 2, rarity: '영웅' }, { name: "루비 반지", stage: 0, count: 4, rarity: '희귀' }] };
+            }
+            if (baseName === "공허의 마왕갑") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "어둠의 망토", stage: 0, count: 1, rarity: '영웅' }, { name: "녹슨 열쇠", stage: 0, count: 2, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "마법사의 수정구", stage: 0, count: 1, rarity: '영웅' }, { name: "사파이어 펜던트", stage: 0, count: 3, rarity: '희귀' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "용기사의 방패", stage: 0, count: 2, rarity: '영웅' }, { name: "은빛 단검", stage: 0, count: 4, rarity: '희귀' }] };
+            }
+            if (baseName === "천둥의 발키리 창") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "빛나는 기사 검", stage: 0, count: 1, rarity: '영웅' }, { name: "녹슨 못", stage: 0, count: 2, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "정령왕의 홀", stage: 0, count: 1, rarity: '영웅' }, { name: "마법 양피지", stage: 0, count: 3, rarity: '희귀' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "천상의 날개", stage: 0, count: 2, rarity: '영웅' }, { name: "정령의 물방울", stage: 0, count: 4, rarity: '희귀' }] };
+            }
+            if (baseName === "황혼의 불사조깃털") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "태양의 브로치", stage: 0, count: 1, rarity: '영웅' }, { name: "빛바랜 깃털", stage: 0, count: 2, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "황금 사자 왕관", stage: 0, count: 1, rarity: '영웅' }, { name: "호박석 조각", stage: 0, count: 3, rarity: '희귀' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "왕실의 마법 가면", stage: 0, count: 2, rarity: '영웅' }, { name: "황금 동전", stage: 0, count: 4, rarity: '희귀' }] };
+            }
+            if (baseName === "심판의 천칭") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "용기사의 방패", stage: 0, count: 1, rarity: '영웅' }, { name: "구형 태엽", stage: 0, count: 2, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "어둠의 망토", stage: 0, count: 1, rarity: '영웅' }, { name: "청금석 구슬", stage: 0, count: 3, rarity: '희귀' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "마법사의 수정구", stage: 0, count: 2, rarity: '영웅' }, { name: "바다의 진주", stage: 0, count: 4, rarity: '희귀' }] };
+            }
+            if (baseName === "대지의 티탄 방패") {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "정령왕의 홀", stage: 0, count: 1, rarity: '영웅' }, { name: "거친 돌멩이", stage: 0, count: 3, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "천상의 날개", stage: 0, count: 1, rarity: '영웅' }, { name: "오팔 브로치", stage: 0, count: 3, rarity: '희귀' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "태양의 브로치", stage: 0, count: 2, rarity: '영웅' }, { name: "토파즈 귀걸이", stage: 0, count: 4, rarity: '희귀' }] };
+            }
+
+            // Fallback unique recipe for any remaining Legendary
+            if (ALL_TREASURES_DATABASE.find(t => t.name === baseName && t.rarity === 'LEGENDARY')) {
+                if (targetStage === 1) return { reqEnhance: 10, gemCost: 100, items: [{ name: "왕실의 마법 가면", stage: 0, count: 1, rarity: '영웅' }, { name: "빛바랜 엽전", stage: 0, count: 2, rarity: '일반' }] };
+                if (targetStage === 2) return { reqEnhance: 15, gemCost: 300, items: [{ name: "마법사의 수정구", stage: 0, count: 1, rarity: '영웅' }, { name: "사파이어 펜던트", stage: 0, count: 2, rarity: '희귀' }] };
+                if (targetStage === 3) return { reqEnhance: 20, gemCost: 500, items: [{ name: "용기사의 방패", stage: 0, count: 2, rarity: '영웅' }, { name: "은빛 단검", stage: 0, count: 2, rarity: '희귀' }] };
+            }
+
+            return { reqEnhance: 10, gemCost: 100, items: [] };
+        }
+
+        function renderUpgradeView(container) {
+            validateActiveTreasure();
+            const item = gameState.inventory.find(i => i.uid === gameState.activeTreasureUid);
+
+            let html = `
+                <div class="p-4 flex flex-col items-center min-h-[75vh] pb-24">
+                    <h2 class="text-base font-bold text-amber-300 font-['Jua'] mb-3">보물 강화 및 차원 진화</h2>
+            `;
+
+            if (!item || gameState.inventory.length === 0) {
+                html += `
+                    <div class="flex flex-col items-center justify-center py-20 text-slate-500">
+                        <span class="text-3xl mb-2">🎒</span>
+                        <p class="text-xs">보유 중인 보물이 없습니다.</p>
+                    </div>
+                </div>`;
+                container.innerHTML = html;
+                return;
+            }
+
+            const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+            const rInfo = RARITIES[base.rarity];
+            const evoMeta = getEvolutionMeta(base, item.evolutionStage);
+            const power = Math.floor(base.basePower * Math.pow(1.15, item.enhanceLevel) * Math.pow(1.5, item.evolutionStage));
+
+            let successRate = Math.max(25, 95 - item.enhanceLevel * 2.5);
+            let nextStage = item.evolutionStage + 1;
+            let isLegendaryOrMythic = (base.rarity === 'LEGENDARY' || base.rarity === 'MYTHIC');
+            let recipe = isLegendaryOrMythic ? getHardcoreRecipe(base.name, nextStage) : null;
+            const stageClass = `evo-stage-${item.evolutionStage}`;
+
+            html += `
+                <div class="w-full max-w-xs ${rInfo.bg} ${stageClass} rounded-3xl p-4 flex flex-col items-center mb-4 relative shadow-xl">
+                    <div class="absolute top-3 right-3 bg-black/50 px-2.5 py-1 rounded-lg text-xs font-mono text-amber-300 font-bold">
+                        +${item.enhanceLevel} ${item.evolutionStage > 0 ? `(${item.evolutionStage}진)` : ''}
+                    </div>
+                    <div class="treasure-icon-box bg-slate-900/80 my-auto w-20 h-20 rounded-2xl">${evoMeta.svg}</div>
+                    <div class="text-sm font-bold ${rInfo.text} text-center mt-1">${evoMeta.name}</div>
+                    <div class="text-xs text-amber-400 font-mono mt-1">전력: ${power.toLocaleString()}</div>
+                    <button onclick="openUpgradeSelectModal()" class="mt-3 px-3 py-1 bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-xs rounded-xl border border-slate-700 transition">🔄 보물 교체</button>
+                </div>
+
+                <div class="w-full max-w-xs space-y-3">
+                    <div class="glass-panel p-3.5 rounded-2xl border border-slate-700/80">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-slate-200">속성 강화 (+${item.enhanceLevel})</span>
+                            <span class="text-[11px] text-emerald-400 font-mono">성공률: ${successRate}%</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 mb-3">비용: 🪙 500 골드</div>
+                        <button onclick="enhanceItem('${item.uid}')" class="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg active:scale-95">강화 시도 (🪙 500)</button>
+                    </div>
+            `;
+
+            let requiredEnhance = nextStage === 1 ? 10 : (nextStage === 2 ? 15 : 20);
+            let requiredGems = nextStage === 1 ? 100 : (nextStage === 2 ? 300 : 500);
+
+            html += `
+                <div class="glass-panel p-3.5 rounded-2xl border border-slate-700/80">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs font-bold text-slate-200">차원 진화 (${item.evolutionStage}/3단계)</span>
+                        <span class="text-[11px] text-cyan-400 font-mono">${item.evolutionStage >= 3 ? '최종 완료' : `요건: +${requiredEnhance} / 💎 ${requiredGems}`}</span>
+                    </div>
+            `;
+
+            if (item.evolutionStage < 3) {
+                if (isLegendaryOrMythic && recipe && recipe.items.length > 0) {
+                    html += `
+                        <div class="text-[10px] text-slate-300 mb-2 bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 space-y-1">
+                            <div class="font-bold text-amber-300 mb-1">📋 ${nextStage}진화 재료 조건 (+${requiredEnhance}강, 💎 ${requiredGems}):</div>
+                    `;
+                    recipe.items.forEach(req => {
+                        let countFound = 0;
+                        gameState.inventory.forEach(inv => {
+                            const b = ALL_TREASURES_DATABASE.find(t => t.id === inv.baseId);
+                            if (b && b.name === req.name && inv.evolutionStage === req.stage && inv.uid !== item.uid) {
+                                countFound++;
+                            }
+                        });
+                        let hasEnough = countFound >= req.count;
+                        html += `<div class="${hasEnough ? 'text-emerald-400' : 'text-rose-400'}">· ${req.name} [${req.rarity}] (${req.stage}진) x${req.count} (보유: ${countFound})</div>`;
+                    });
+                    html += `</div>`;
+                }
+
+                html += `
+                        <button onclick="evolveItem('${item.uid}')" class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white font-bold rounded-xl text-xs transition shadow-lg active:scale-95">진화 진행 (💎 ${requiredGems})</button>
+                `;
+            } else {
+                html += `
+                        <div class="text-xs text-amber-300 font-bold text-center py-2 bg-amber-500/10 rounded-xl border border-amber-500/30">🌟 최고 단계 진화 도달 완료</div>
+                `;
+            }
+            html += `</div></div></div>`;
+            container.innerHTML = html;
+        }
+
+        function openUpgradeSelectModal() {
+            const modal = document.getElementById('modal-container');
+            modal.classList.remove('hidden');
+
+            let html = `
+                <div class="glass-panel w-full max-w-sm p-4 rounded-3xl border border-slate-700/80 flex flex-col max-h-[85vh] shadow-2xl">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-sm font-bold text-amber-300 font-['Jua']">강화할 보물 선택</h3>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-white text-xs">✕ 닫기</button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto grid grid-cols-2 gap-2">
+            `;
+
+            gameState.inventory.forEach(item => {
+                const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+                const rInfo = RARITIES[base.rarity];
+                const evoMeta = getEvolutionMeta(base, item.evolutionStage);
+                const power = Math.floor(base.basePower * Math.pow(1.15, item.enhanceLevel) * Math.pow(1.5, item.evolutionStage));
+                const stageClass = `evo-stage-${item.evolutionStage}`;
+
+                html += `
+                    <div onclick="selectActiveTreasure('${item.uid}')" class="treasure-card-frame ${rInfo.bg} ${stageClass} cursor-pointer hover:scale-[1.02] transition p-2.5">
+                        <div class="absolute top-2 right-2 bg-black/40 px-1.5 py-0.5 rounded text-[8px] font-mono text-amber-300">+${item.enhanceLevel}</div>
+                        <div class="treasure-icon-box bg-slate-900/80 my-auto w-12 h-12">${evoMeta.svg}</div>
+                        <div class="text-[10px] ${rInfo.text} font-bold truncate w-full text-center mt-1">${evoMeta.name}</div>
+                        <div class="text-[9px] text-amber-400 font-mono text-center">전력: ${power.toLocaleString()}</div>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            modal.innerHTML = html;
+        }
+
+        function selectActiveTreasure(uid) {
+            gameState.activeTreasureUid = uid;
+            closeModal();
+            renderUpgradeView(document.getElementById('main-content'));
+            showToast("✨ 보물이 선택되었습니다.");
+        }
+
+        function enhanceItem(uid) {
+            const item = gameState.inventory.find(i => i.uid === uid);
+            if (!item) return;
+            if (gameState.gold < 500) {
+                showToast("❌ 골드가 부족합니다! (필요: 500 골드)");
+                return;
+            }
+
+            gameState.gold -= 500;
+            let successRate = Math.max(25, 95 - item.enhanceLevel * 2.5);
+
+            const rand = Math.random() * 100;
+            if (rand <= successRate) {
+                item.enhanceLevel += 1;
+                showToast(`🎉 강화 성공! (+${item.enhanceLevel})`);
+            } else {
+                showToast("❌ 강화 실패...");
+            }
+
+            saveGame();
+            renderUpgradeView(document.getElementById('main-content'));
+        }
+
+        function evolveItem(uid) {
+            const item = gameState.inventory.find(i => i.uid === uid);
+            if (!item) return;
+            if (item.evolutionStage >= 3) {
+                showToast("이미 최고 단계로 진화했습니다.");
+                return;
+            }
+
+            const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+            let nextStage = item.evolutionStage + 1;
+            let reqEnhance = nextStage === 1 ? 10 : (nextStage === 2 ? 15 : 20);
+            let gemCost = nextStage === 1 ? 100 : (nextStage === 2 ? 300 : 500);
+            let isLegendaryOrMythic = (base.rarity === 'LEGENDARY' || base.rarity === 'MYTHIC');
+            let recipe = isLegendaryOrMythic ? getHardcoreRecipe(base.name, nextStage) : null;
+
+            if (item.enhanceLevel < reqEnhance) {
+                showToast(`❌ 강화 수치 +${reqEnhance} 이상이 필요합니다!`);
+                return;
+            }
+            if (gameState.gems < gemCost) {
+                showToast(`❌ 다이아가 부족합니다! (필요: 💎 ${gemCost})`);
+                return;
+            }
+
+            let consumedUids = [];
+            if (isLegendaryOrMythic && recipe && recipe.items.length > 0) {
+                for (let req of recipe.items) {
+                    let matched = 0;
+                    let potentialUids = [];
+                    gameState.inventory.forEach(inv => {
+                        const b = ALL_TREASURES_DATABASE.find(t => t.id === inv.baseId);
+                        if (b && b.name === req.name && inv.evolutionStage === req.stage && inv.uid !== item.uid && !consumedUids.includes(inv.uid)) {
+                            potentialUids.push(inv.uid);
+                            matched++;
+                        }
+                    });
+
+                    if (matched < req.count) {
+                        showToast(`❌ 진화 재료 부족: ${req.name} (${req.stage}진) ${req.count}개가 필요합니다!`);
+                        return;
+                    }
+
+                    for (let c = 0; c < req.count; c++) {
+                        consumedUids.push(potentialUids[c]);
+                    }
+                }
+            }
+
+            gameState.gems -= gemCost;
+            if (consumedUids.length > 0) {
+                gameState.inventory = gameState.inventory.filter(inv => !consumedUids.includes(inv.uid));
+            }
+            item.evolutionStage += 1;
+            saveGame();
+            showToast(`🌟 차원 진화 성공! (${item.evolutionStage}단계 도달)`);
+            renderUpgradeView(document.getElementById('main-content'));
+        }
+
+        /* --- 5. BATTLE ARENA --- */
+        const EPIC_BOSS_NAMES = [
+            "공허의 파괴신 벨제부르", "심연의 지배자 카오스 드래곤", "혼돈의 군주 아포칼립스", 
+            "태고의 타락한 수호자", "차원 살해자 제로스", "불멸의 암흑 마왕", 
+            "천공을 삼킨 재앙의 요수", "지옥의 용암 군주 바알", "시공간의 포식자 네메시스", "파멸의 절대자 루시퍼"
+        ];
+
+        function renderBattleArenaView(container) {
+            validateActiveTreasure();
+            const activeItem = gameState.inventory.find(i => i.uid === gameState.activeTreasureUid);
+            const activeBase = activeItem ? ALL_TREASURES_DATABASE.find(t => t.id === activeItem.baseId) : null;
+            const activePower = activeItem && activeBase ? Math.floor(activeBase.basePower * Math.pow(1.15, activeItem.enhanceLevel) * Math.pow(1.5, activeItem.evolutionStage)) : 100;
+            const repMeta = activeBase ? getEvolutionMeta(activeBase, activeItem.evolutionStage) : null;
+
+            const currentFloor = gameState.recordDungeonFloor || 1;
+
+            container.innerHTML = `
+                <div class="p-4 flex flex-col items-center min-h-[75vh] pb-24 space-y-4">
+                    <div class="text-center">
+                        <h2 class="text-base font-bold text-amber-300 font-['Jua'] mb-1">⚔️ 토벌 아레나</h2>
+                        <p class="text-xs text-slate-400">보물 전력이 곧 일반 공격 데미지가 됩니다!</p>
+                    </div>
+
+                    <div class="glass-panel w-full max-w-xs p-4 rounded-2xl border border-amber-500/40 flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center border border-slate-700">
+                                ${repMeta ? repMeta.svg : '🛡️'}
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-white">${repMeta ? repMeta.name : '선택된 보물 없음'}</div>
+                                <div class="text-[10px] text-amber-400 font-mono">전투력 (데미지): ${activePower.toLocaleString()}</div>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('inventory')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-xl font-bold">변경</button>
+                    </div>
+
+                    <div class="w-full max-w-xs space-y-3 pt-1">
+                        <!-- Endless Record Dungeon -->
+                        <div class="glass-panel p-4 rounded-2xl border border-purple-500/40 bg-gradient-to-br from-purple-950/20 to-slate-900 flex flex-col justify-between h-42">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-bold text-purple-300 font-['Jua']">🏆 기록 던전 (무한 경쟁)</span>
+                                    <span class="text-[10px] bg-purple-900/60 text-purple-200 px-2 py-0.5 rounded font-mono">나의 기록: ${currentFloor}층</span>
+                                </div>
+                                <p class="text-[11px] text-slate-300 mb-2">1분 제한시간! 층마다 강해지는 보스를 격파하고 보상을 획득하세요!</p>
+                            </div>
+                            <button onclick="startPrecisionBattle('record')" class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 text-white font-bold rounded-xl text-xs transition shadow-lg active:scale-95">⚔️ 기록 던전 도전 (${currentFloor}층)</button>
+                        </div>
+
+                        <!-- Goblin Dungeon -->
+                        <div class="glass-panel p-4 rounded-2xl border border-emerald-500/40 bg-gradient-to-br from-emerald-950/20 to-slate-900 flex flex-col justify-between h-38">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-bold text-emerald-400 font-['Jua']">👺 초록 고블린 킹 던전</span>
+                                    <span class="text-[10px] bg-emerald-900/60 text-emerald-200 px-2 py-0.5 rounded font-mono">HP: 10,000</span>
+                                </div>
+                                <p class="text-[11px] text-slate-300">30초 내 토벌 (보상: 🪙 500 골드 & 💎 10 다이아)</p>
+                            </div>
+                            <button onclick="startPrecisionBattle('goblin')" class="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold rounded-xl text-xs transition shadow-lg active:scale-95">⚔️ 고블린 던전 입장</button>
+                        </div>
+
+                        <!-- Red Dragon Dungeon -->
+                        <div class="glass-panel p-4 rounded-2xl border border-rose-500/40 bg-gradient-to-br from-rose-950/20 to-slate-900 flex flex-col justify-between h-38">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-bold text-rose-400 font-['Jua']">🐉 붉은 드래곤 던전</span>
+                                    <span class="text-[10px] bg-rose-900/60 text-rose-200 px-2 py-0.5 rounded font-mono">HP: 1,000,000</span>
+                                </div>
+                                <p class="text-[11px] text-slate-300">무제한 시간, 느린 불꽃 투사체 1초 간격 발사 (보상: 🪙 5,000 골드 & 💎 20 다이아)</p>
+                            </div>
+                            <button onclick="startPrecisionBattle('dragon')" class="w-full py-3 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 text-white font-bold rounded-xl text-xs transition shadow-lg active:scale-95">🔥 붉은 드래곤 던전 입장</button>
+                        </div>
+
+                        <!-- Training Ground -->
+                        <div class="glass-panel p-4 rounded-2xl border border-cyan-500/40 bg-gradient-to-br from-cyan-950/20 to-slate-900 flex flex-col justify-between h-38">
+                            <div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-sm font-bold text-cyan-300 font-['Jua']">🎯 훈련장 (샌드백)</span>
+                                    <span class="text-[10px] bg-cyan-900/60 text-cyan-200 px-2 py-0.5 rounded font-mono">HP: 무한</span>
+                                </div>
+                                <p class="text-[11px] text-slate-300">체력이 무한인 샌드백을 상대로 전투력과 신화 스킬을 테스트해보세요!</p>
+                            </div>
+                            <button onclick="startPrecisionBattle('training')" class="w-full py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 text-white font-bold rounded-xl text-xs transition shadow-lg active:scale-95">🎯 훈련장 입장하기</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function startPrecisionBattle(bossType) {
+            const main = document.getElementById('main-content');
+            validateActiveTreasure();
+            const activeItem = gameState.inventory.find(i => i.uid === gameState.activeTreasureUid);
+            const activeBase = activeItem ? ALL_TREASURES_DATABASE.find(t => t.id === activeItem.baseId) : null;
+            const playerPower = activeItem && activeBase ? Math.floor(activeBase.basePower * Math.pow(1.15, activeItem.enhanceLevel) * Math.pow(1.5, activeItem.evolutionStage)) : 100;
+
+            let rarityKey = activeBase ? activeBase.rarity : 'COMMON';
+            let rangeMultiplier = 3.0;
+            let bulletColor = '#94a3b8';
+            let ringColor = '#94a3b8';
+
+            if (rarityKey === 'COMMON') { rangeMultiplier = 2.0; bulletColor = '#94a3b8'; ringColor = '#94a3b8'; }
+            else if (rarityKey === 'RARE') { rangeMultiplier = 3.0; bulletColor = '#38bdf8'; ringColor = '#38bdf8'; }
+            else if (rarityKey === 'EPIC') { rangeMultiplier = 4.0; bulletColor = '#c084fc'; ringColor = '#c084fc'; }
+            else if (rarityKey === 'LEGENDARY') { rangeMultiplier = 5.0; bulletColor = '#f59e0b'; ringColor = '#f59e0b'; }
+            else if (rarityKey === 'MYTHIC') { rangeMultiplier = 5.5; bulletColor = '#ef4444'; ringColor = '#ef4444'; }
+
+            let repMeta = activeBase ? getEvolutionMeta(activeBase, activeItem.evolutionStage) : null;
+            let rawSvgInner = repMeta && repMeta.rawSvg ? repMeta.rawSvg : '<circle cx="32" cy="32" r="20" fill="#38bdf8"/>';
+
+            let bossName = '👺 초록 고블린 킹';
+            let maxHp = 10000;
+            let currentFloor = gameState.recordDungeonFloor || 1;
+
+            if (bossType === 'dragon') {
+                bossName = '🐉 붉은 드래곤';
+                maxHp = 1000000;
+            } else if (bossType === 'record') {
+                let nameIdx = (currentFloor - 1) % EPIC_BOSS_NAMES.length;
+                bossName = `[${currentFloor}층] ${EPIC_BOSS_NAMES[nameIdx]}`;
+                maxHp = Math.floor(1000000 * Math.pow(1.3, currentFloor - 1));
+            } else if (bossType === 'training') {
+                bossName = '🎯 훈련용 샌드백';
+                maxHp = 999999999;
+            }
+
+            const isMythic = rarityKey === 'MYTHIC';
+            const mythicIconHtml = (isMythic && repMeta) ? repMeta.svg : '';
+
+            main.innerHTML = `
+                <div class="fixed inset-0 bg-slate-950 flex flex-col items-center justify-between z-30 select-none overflow-hidden" style="touch-action: none;">
+                    <!-- Top HUD -->
+                    <div class="w-full px-4 py-2 bg-slate-900/95 border-b border-slate-800 flex flex-col items-center space-y-1 flex-shrink-0 z-40">
+                        <div class="flex justify-between w-full text-xs font-bold">
+                            <span class="text-rose-400">${bossName}</span>
+                            <span id="battle-timer" class="text-cyan-300 font-mono text-sm">${bossType === 'dragon' || bossType === 'training' ? '∞' : (bossType === 'record' ? '60s' : '30s')}</span>
+                            <span class="text-emerald-400">전투력(데미지): ${playerPower.toLocaleString()}</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-700 relative">
+                            <div id="boss-hp-bar" class="bg-rose-500 h-full w-full transition-all duration-75"></div>
+                            <div class="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white" id="boss-hp-text">${bossType === 'training' ? '∞ HP' : `${maxHp.toLocaleString()} / ${maxHp.toLocaleString()}`}</div>
+                        </div>
+                    </div>
+
+                    <!-- Arena Canvas -->
+                    <div class="flex-1 w-full relative bg-[#060913] overflow-hidden" id="arena-container">
+                        <canvas id="battle-canvas" class="w-full h-full block"></canvas>
+                        ${bossType === 'training' ? `
+                            <button onclick="exitTrainingGround()" class="absolute top-3 right-3 px-3 py-1.5 bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-xs rounded-xl border border-slate-600 shadow-lg z-50">🚪 훈련장 나가기</button>
+                        ` : ''}
+                    </div>
+
+                    <!-- Control Box -->
+                    <div class="h-36 w-full bg-slate-900/95 border-t border-slate-800 grid grid-cols-3 items-center px-4 flex-shrink-0 z-40">
+                        <div class="flex justify-center items-center">
+                            <div id="pad-left" class="w-28 h-28 rounded-2xl bg-slate-950/80 border-2 border-slate-600/70 relative flex items-center justify-center shadow-lg">
+                                <div id="knob-left" class="w-12 h-12 rounded-xl bg-slate-600/80 absolute shadow-md transition-transform duration-75 pointer-events-none"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center items-center">
+                            ${isMythic ? `
+                                <div id="skill-btn" class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-purple-900 via-slate-900 to-indigo-950 border-2 border-purple-400/80 relative flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.6)] cursor-pointer active:scale-95 transition">
+                                    <div class="absolute inset-0 rounded-xl overflow-hidden flex items-center justify-center opacity-85 pointer-events-none">${mythicIconHtml}</div>
+                                    <div id="skill-cooldown-overlay" class="absolute inset-0 bg-black/80 rounded-xl flex items-center justify-center text-xs font-mono font-bold text-amber-300 hidden pointer-events-none">15s</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="flex justify-center items-center">
+                            <div id="pad-right" class="w-28 h-28 rounded-2xl bg-slate-950/80 border-2 border-slate-600/70 relative flex items-center justify-center shadow-lg">
+                                <div id="knob-right" class="w-12 h-12 rounded-xl bg-slate-600/80 absolute shadow-md transition-transform duration-75 pointer-events-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            initPrecisionArenaGame(playerPower, rangeMultiplier, bulletColor, ringColor, rawSvgInner, bossType, activeBase ? activeBase.name : '', maxHp);
+        }
+
+        function exitTrainingGround() {
+            if (window.activeBattleAnimFrame) {
+                cancelAnimationFrame(window.activeBattleAnimFrame);
+                window.activeBattleAnimFrame = null;
+            }
+            switchTab('battle');
+            showToast("🎯 훈련장을 종료했습니다.");
+        }
+
+        function initPrecisionArenaGame(playerPower, rangeMultiplier, bulletColor, ringColor, rawSvgInner, bossType, treasureName, initialMaxHp) {
+            const canvas = document.getElementById('battle-canvas');
+            const container = document.getElementById('arena-container');
+            const ctx = canvas.getContext('2d');
+
+            function resizeCanvas() {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+            resizeCanvas();
+
+            let player = {
+                x: canvas.width / 2,
+                y: canvas.height - 80,
+                radius: 22,
+                speed: 3.2
+            };
+
+            let boss = {
+                x: canvas.width / 2,
+                y: 100,
+                radius: bossType === 'dragon' || bossType === 'record' ? 32 : 24,
+                maxHp: initialMaxHp,
+                hp: initialMaxHp,
+                speed: bossType === 'dragon' || bossType === 'record' ? 1.6 : 1.8,
+                strafeTimer: 0,
+                strafeDir: 1,
+                stunTimer: 0
+            };
+
+            let bullets = [];
+            let enemyProjectiles = [];
+            let timeLeft = (bossType === 'dragon' || bossType === 'training') ? 999 : (bossType === 'record' ? 60 : 30);
+            let battleOver = false;
+            let lastBossShotTime = 0;
+
+            let skillOnCooldown = false;
+            let timeStopTimer = 0;
+
+            const skillBtn = document.getElementById('skill-btn');
+            if (skillBtn) {
+                const triggerSkill = (e) => {
+                    if (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                    if (skillOnCooldown || battleOver) return;
+                    skillOnCooldown = true;
+
+                    let cdTime = 15;
+                    if (treasureName === '시간의 모래시계 코어') {
+                        timeStopTimer = 150;
+                        cdTime = 25;
+                        showToast(`⏳ 시간 정지 발동! (2.5초 & 던전 시간 정지)`);
+                    } else if (treasureName === '차원 파괴의 건틀릿') {
+                        boss.stunTimer = 180;
+                        let homingCount = 5;
+                        for (let h = 0; h < homingCount; h++) {
+                            setTimeout(() => {
+                                if (!battleOver) {
+                                    let angle = Math.atan2(boss.y - player.y, boss.x - player.x);
+                                    bullets.push({
+                                        x: player.x,
+                                        y: player.y,
+                                        startX: player.x,
+                                        startY: player.y,
+                                        vx: Math.cos(angle) * 9,
+                                        vy: Math.sin(angle) * 9,
+                                        radius: 18,
+                                        maxDistance: 800,
+                                        travelled: 0,
+                                        color: '#ef4444',
+                                        damage: Math.max(1500, Math.floor(playerPower * 4))
+                                    });
+                                }
+                            }, h * 150);
+                        }
+                        showToast(`🌀 차원참 유도 발동! (3초 스턴)`);
+                    } else if (treasureName === '사룡') {
+                        boss.hp -= Math.max(15000, Math.floor(playerPower * 6));
+                        enemyProjectiles = [];
+                        showToast(`🐉 사룡멸천진 궁극기 발동!`);
+                    } else if (treasureName === '태초의 아티팩트') {
+                        boss.hp -= Math.max(8000, Math.floor(playerPower * 3));
+                        enemyProjectiles = [];
+                        showToast(`✨ 태초의 폭발 발동!`);
+                    } else if (treasureName === '우주 창조의 핵') {
+                        boss.hp -= Math.max(10000, Math.floor(playerPower * 3.5));
+                        enemyProjectiles = [];
+                        showToast(`🌌 초신성 붕괴 발동!`);
+                    } else if (treasureName === '만물의 근원 오라브') {
+                        boss.hp -= Math.max(8000, Math.floor(playerPower * 3));
+                        enemyProjectiles = [];
+                        showToast(`🌿 세계수의 가호 발동!`);
+                    } else if (treasureName === '인피니티 크라운') {
+                        boss.hp -= Math.max(10000, Math.floor(playerPower * 3.5));
+                        enemyProjectiles = [];
+                        showToast(`👑 왕의 영역 발동!`);
+                    } else if (treasureName === '이터니티 하트') {
+                        boss.hp -= Math.max(12000, Math.floor(playerPower * 3.8));
+                        enemyProjectiles = [];
+                        showToast(`❤️ 불멸의 심장박동 발동!`);
+                    }
+
+                    const hpBar = document.getElementById('boss-hp-bar');
+                    const hpText = document.getElementById('boss-hp-text');
+                    if (hpBar && hpText && bossType !== 'training') {
+                        let pct = Math.max(0, (boss.hp / boss.maxHp) * 100);
+                        hpBar.style.width = pct + '%';
+                        hpText.innerText = `${Math.max(0, boss.hp).toLocaleString()} / ${boss.maxHp.toLocaleString()}`;
+                    }
+
+                    if (bossType !== 'training' && boss.hp <= 0) {
+                        battleOver = true;
+                        let winMsg = "🎉 보스를 토벌하고 승리했습니다!";
+                        if (bossType === 'record') {
+                            winMsg = `🎉 기록 던전 ${gameState.recordDungeonFloor}층 클리어! (다음 층으로 진입)`;
+                        }
+                        endBattle(true, winMsg, bossType);
+                        return;
+                    }
+
+                    const overlay = document.getElementById('skill-cooldown-overlay');
+                    if (overlay) {
+                        overlay.classList.remove('hidden');
+                        let rem = cdTime;
+                        overlay.innerText = rem + 's';
+                        let cdInterval = setInterval(() => {
+                            rem--;
+                            if (rem > 0) {
+                                overlay.innerText = rem + 's';
+                            } else {
+                                clearInterval(cdInterval);
+                                overlay.classList.add('hidden');
+                                skillOnCooldown = false;
+                            }
+                        }, 1000);
+                    }
+                };
+
+                skillBtn.addEventListener('click', triggerSkill);
+                skillBtn.addEventListener('touchstart', triggerSkill, { passive: false });
+            }
+
+            let moveVector = { x: 0, y: 0 };
+            let aimVector = { x: 0, y: 0 };
+            let isAiming = false;
+
+            let timerInterval = null;
+            if (bossType !== 'dragon' && bossType !== 'training') {
+                timerInterval = setInterval(() => {
+                    if (battleOver) {
+                        clearInterval(timerInterval);
+                        return;
+                    }
+                    if (timeStopTimer > 0) return;
+
+                    timeLeft--;
+                    const timerEl = document.getElementById('battle-timer');
+                    if (timerEl) timerEl.innerText = timeLeft + 's';
+
+                    if (timeLeft <= 0) {
+                        endBattle(false, "⏰ 시간 초과! 제한시간 내에 보스를 토벌하지 못했습니다.", bossType);
+                    }
+                }, 1000);
+            }
+
+            const padLeft = document.getElementById('pad-left');
+            const knobLeft = document.getElementById('knob-left');
+            const padRight = document.getElementById('pad-right');
+            const knobRight = document.getElementById('knob-right');
+
+            function setupPrecisionPad(pad, knob, isMove) {
+                let activeId = null;
+                let startX = 0, startY = 0;
+
+                const onStart = (identifier, clientX, clientY) => {
+                    if (activeId !== null) return;
+                    activeId = identifier;
+                    const rect = pad.getBoundingClientRect();
+                    startX = rect.left + rect.width / 2;
+                    startY = rect.top + rect.height / 2;
+                };
+
+                const onMove = (identifier, clientX, clientY) => {
+                    if (activeId !== identifier) return;
+                    let dx = clientX - startX;
+                    let dy = clientY - startY;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    const maxDist = 36;
+
+                    if (dist > maxDist) {
+                        dx = (dx / dist) * maxDist;
+                        dy = (dy / dist) * maxDist;
+                    }
+
+                    knob.style.transform = `translate(${dx}px, ${dy}px)`;
+
+                    let nx = dx / maxDist;
+                    let ny = dy / maxDist;
+
+                    if (isMove) {
+                        moveVector = { x: nx, y: ny };
+                    } else {
+                        aimVector = { x: nx, y: ny };
+                        isAiming = dist > 8;
+                    }
+                };
+
+                const onEnd = (identifier) => {
+                    if (activeId !== identifier) return;
+                    activeId = null;
+                    knob.style.transform = `translate(0px, 0px)`;
+                    if (isMove) {
+                        moveVector = { x: 0, y: 0 };
+                    } else {
+                        if (isAiming && (aimVector.x !== 0 || aimVector.y !== 0)) {
+                            let angle = Math.atan2(aimVector.y, aimVector.x);
+                            let rectWidth = 30;
+                            let baseRangeLength = 50;
+                            let maxTravelDistance = baseRangeLength * rangeMultiplier;
+
+                            // POWER EQUALS DAMAGE: Normal bullet damage equals playerPower directly!
+                            bullets.push({
+                                x: player.x,
+                                y: player.y,
+                                startX: player.x,
+                                startY: player.y,
+                                vx: Math.cos(angle) * 7.5,
+                                vy: Math.sin(angle) * 7.5,
+                                radius: rectWidth / 2,
+                                maxDistance: maxTravelDistance,
+                                travelled: 0,
+                                color: bulletColor,
+                                damage: Math.max(10, playerPower)
+                            });
+                        }
+                        aimVector = { x: 0, y: 0 };
+                        isAiming = false;
+                    }
+                };
+
+                pad.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    const touch = e.changedTouches[0];
+                    onStart(touch.identifier, touch.clientX, touch.clientY);
+                }, { passive: false });
+
+                window.addEventListener('touchmove', (e) => {
+                    if (activeId === null) return;
+                    for (let i = 0; i < e.changedTouches.length; i++) {
+                        const touch = e.changedTouches[i];
+                        if (touch.identifier === activeId) {
+                            onMove(touch.identifier, touch.clientX, touch.clientY);
+                        }
+                    }
+                }, { passive: false });
+
+                window.addEventListener('touchend', (e) => {
+                    if (activeId === null) return;
+                    for (let i = 0; i < e.changedTouches.length; i++) {
+                        const touch = e.changedTouches[i];
+                        if (touch.identifier === activeId) {
+                            onEnd(touch.identifier);
+                        }
+                    }
+                }, { passive: false });
+
+                pad.addEventListener('mousedown', (e) => {
+                    onStart('mouse', e.clientX, e.clientY);
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (activeId === 'mouse') {
+                        onMove('mouse', e.clientX, e.clientY);
+                    }
+                });
+
+                window.addEventListener('mouseup', () => {
+                    if (activeId === 'mouse') {
+                        onEnd('mouse');
+                    }
+                });
+            }
+
+            setupPrecisionPad(padLeft, knobLeft, true);
+            setupPrecisionPad(padRight, knobRight, false);
+
+            function gameLoop() {
+                if (battleOver) return;
+
+                if (timeStopTimer > 0) {
+                    timeStopTimer--;
+                }
+
+                if (moveVector.x !== 0 || moveVector.y !== 0) {
+                    let len = Math.sqrt(moveVector.x * moveVector.x + moveVector.y * moveVector.y);
+                    let normX = moveVector.x / len;
+                    let normY = moveVector.y / len;
+                    player.x += normX * player.speed;
+                    player.y += normY * player.speed;
+                }
+                player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
+                player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
+
+                for (let i = bullets.length - 1; i >= 0; i--) {
+                    let b = bullets[i];
+                    b.x += b.vx;
+                    b.y += b.vy;
+                    let stepDist = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
+                    b.travelled += stepDist;
+
+                    let bDist = Math.sqrt((b.x - boss.x) ** 2 + (b.y - boss.y) ** 2);
+                    if (bDist < boss.radius + b.radius) {
+                        boss.hp -= b.damage;
+                        bullets.splice(i, 1);
+
+                        const hpBar = document.getElementById('boss-hp-bar');
+                        const hpText = document.getElementById('boss-hp-text');
+                        if (hpBar && hpText) {
+                            if (bossType === 'training') {
+                                hpBar.style.width = '100%';
+                                hpText.innerText = `${boss.hp.toLocaleString()} HP (훈련중)`;
+                            } else {
+                                let pct = Math.max(0, (boss.hp / boss.maxHp) * 100);
+                                hpBar.style.width = pct + '%';
+                                hpText.innerText = `${Math.max(0, boss.hp).toLocaleString()} / ${boss.maxHp.toLocaleString()}`;
+                            }
+                        }
+
+                        if (bossType !== 'training' && boss.hp <= 0) {
+                            battleOver = true;
+                            if (timerInterval) clearInterval(timerInterval);
+                            let winMsg = "🎉 보스를 토벌하고 승리했습니다!";
+                            if (bossType === 'record') {
+                                winMsg = `🎉 기록 던전 ${gameState.recordDungeonFloor}층 클리어! (다음 층으로 진입)`;
+                            }
+                            endBattle(true, winMsg, bossType);
+                            return;
+                        }
+                        continue;
+                    }
+
+                    if (b.travelled >= b.maxDistance || b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) {
+                        bullets.splice(i, 1);
+                    }
+                }
+
+                if (timeStopTimer === 0) {
+                    if (boss.stunTimer > 0) {
+                        boss.stunTimer--;
+                    } else {
+                        boss.strafeTimer++;
+                        if (boss.strafeTimer > 90) {
+                            boss.strafeDir *= -1;
+                            boss.strafeTimer = 0;
+                        }
+
+                        let pDist = Math.sqrt((player.x - boss.x) ** 2 + (player.y - boss.y) ** 2);
+                        let bAngle = Math.atan2(player.y - boss.y, player.x - boss.x);
+
+                        let moveAngle = bAngle;
+                        if (pDist < 160) {
+                            moveAngle += Math.PI / 2 * boss.strafeDir;
+                        } else if (pDist > 240) {
+                            moveAngle = bAngle;
+                        } else {
+                            moveAngle += Math.PI / 2 * boss.strafeDir;
+                        }
+
+                        boss.x += Math.cos(moveAngle) * boss.speed;
+                        boss.y += Math.sin(moveAngle) * boss.speed;
+                        boss.x = Math.max(boss.radius, Math.min(canvas.width - boss.radius, boss.x));
+                        boss.y = Math.max(boss.radius, Math.min(canvas.height - boss.radius, boss.y));
+                    }
+
+                    let nowTime = Date.now();
+                    // Red dragon shoots every 1000ms (1 second), with slower projectile speed (3.0 instead of 4.5)
+                    let shotCooldown = bossType === 'dragon' ? 1000 : ((bossType === 'record') ? 800 : 1000);
+                    let projSpeed = bossType === 'dragon' ? 3.0 : 4.5;
+
+                    if (bossType !== 'training' && nowTime - lastBossShotTime > shotCooldown) {
+                        let shootAngle = Math.atan2(player.y - boss.y, player.x - boss.x);
+                        enemyProjectiles.push({
+                            x: boss.x,
+                            y: boss.y,
+                            vx: Math.cos(shootAngle) * projSpeed,
+                            vy: Math.sin(shootAngle) * projSpeed,
+                            radius: 12.6,
+                            color: (bossType === 'dragon' || bossType === 'record') ? '#ef4444' : '#78350f',
+                            strokeColor: (bossType === 'dragon' || bossType === 'record') ? '#f87171' : '#b45309'
+                        });
+                        lastBossShotTime = nowTime;
+                    }
+
+                    for (let j = enemyProjectiles.length - 1; j >= 0; j--) {
+                        let ep = enemyProjectiles[j];
+                        ep.x += ep.vx;
+                        ep.y += ep.vy;
+
+                        let hitDist = Math.sqrt((player.x - ep.x) ** 2 + (player.y - ep.y) ** 2);
+                        if (hitDist < player.radius + ep.radius) {
+                            battleOver = true;
+                            if (timerInterval) clearInterval(timerInterval);
+                            endBattle(false, "💀 보스의 공격에 피격되어 쓰러졌습니다!", bossType);
+                            return;
+                        }
+
+                        if (ep.x < 0 || ep.x > canvas.width || ep.y < 0 || ep.y > canvas.height) {
+                            enemyProjectiles.splice(j, 1);
+                        }
+                    }
+
+                    let pDistCheck = Math.sqrt((player.x - boss.x) ** 2 + (player.y - boss.y) ** 2);
+                    if (bossType !== 'training' && pDistCheck < player.radius + boss.radius - 4) {
+                        battleOver = true;
+                        if (timerInterval) clearInterval(timerInterval);
+                        endBattle(false, "💀 보스 몸통에 부딪혀 쓰러졌습니다!", bossType);
+                        return;
+                    }
+                }
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                ctx.fillStyle = (bossType === 'dragon' || bossType === 'record') ? '#ef4444' : (bossType === 'training' ? '#06b6d4' : '#22c55e');
+                ctx.beginPath();
+                ctx.arc(boss.x, boss.y, boss.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = (bossType === 'dragon' || bossType === 'record') ? '#f87171' : (bossType === 'training' ? '#67e8f9' : '#4ade80');
+                ctx.stroke();
+
+                ctx.fillStyle = '#000';
+                ctx.fillRect(boss.x - 24, boss.y - 38, 48, 6);
+                ctx.fillStyle = (bossType === 'dragon' || bossType === 'record') ? '#ef4444' : '#06b6d4';
+                ctx.fillRect(boss.x - 24, boss.y - 38, bossType === 'training' ? 48 : 48 * (boss.hp / boss.maxHp), 6);
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(player.x, player.y, player.radius + 3, 0, Math.PI * 2);
+                ctx.fillStyle = '#0f172a';
+                ctx.fill();
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = ringColor;
+                ctx.stroke();
+                ctx.restore();
+
+                let tempSvgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">${rawSvgInner}</svg>`;
+                let base64Svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(tempSvgStr)));
+                let spriteImg = new Image();
+                spriteImg.src = base64Svg;
+                if (spriteImg.complete && spriteImg.naturalWidth !== 0) {
+                    ctx.drawImage(spriteImg, player.x - player.radius, player.y - player.radius, player.radius * 2, player.radius * 2);
+                } else {
+                    ctx.fillStyle = ringColor;
+                    ctx.beginPath(); ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2); ctx.fill();
+                }
+
+                bullets.forEach(b => {
+                    ctx.fillStyle = b.color;
+                    ctx.beginPath();
+                    ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                enemyProjectiles.forEach(ep => {
+                    ctx.fillStyle = ep.color;
+                    ctx.beginPath();
+                    ctx.arc(ep.x, ep.y, ep.radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = ep.strokeColor;
+                    ctx.stroke();
+                });
+
+                if (isAiming) {
+                    let angle = Math.atan2(aimVector.y, aimVector.x);
+                    let baseRangeLength = 50;
+                    let rangeLength = baseRangeLength * rangeMultiplier;
+                    let rectWidth = 30;
+
+                    ctx.save();
+                    ctx.translate(player.x, player.y);
+                    ctx.rotate(angle);
+
+                    ctx.fillStyle = 'rgba(148, 163, 184, 0.22)';
+                    ctx.strokeStyle = 'rgba(148, 163, 184, 0.8)';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([6, 4]);
+
+                    ctx.beginPath();
+                    ctx.rect(0, -rectWidth / 2, rangeLength, rectWidth);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.restore();
+                }
+
+                window.activeBattleAnimFrame = requestAnimationFrame(gameLoop);
+            }
+
+            window.activeBattleAnimFrame = requestAnimationFrame(gameLoop);
+        }
+
+        function endBattle(isWin, message, bossType) {
+            if (window.activeBattleAnimFrame) {
+                cancelAnimationFrame(window.activeBattleAnimFrame);
+                window.activeBattleAnimFrame = null;
+            }
+
+            let goldReward = 0;
+            let gemReward = 0;
+
+            if (isWin) {
+                if (bossType === 'dragon') {
+                    goldReward = 5000;
+                    gemReward = 20;
+                } else if (bossType === 'goblin') {
+                    goldReward = 500;
+                    gemReward = 10;
+                } else if (bossType === 'record') {
+                    gemReward = 10;
+                    gameState.recordDungeonFloor = (gameState.recordDungeonFloor || 1) + 1;
+                }
+                gameState.gold += goldReward;
+                gameState.gems += gemReward;
+                saveGame();
+            }
+
+            const modal = document.getElementById('modal-container');
+            modal.classList.remove('hidden');
+            modal.innerHTML = `
+                <div class="glass-panel w-full max-w-sm p-5 rounded-3xl border ${isWin ? 'border-amber-500/60' : 'border-rose-500/60'} flex flex-col items-center text-center shadow-2xl">
+                    <span class="text-3xl mb-2">${isWin ? '🏆' : '💀'}</span>
+                    <h3 class="text-base font-bold ${isWin ? 'text-amber-300' : 'text-rose-400'} mb-1">${isWin ? '전투 승리!' : '전투 패배'}</h3>
+                    <p class="text-xs text-slate-300 mb-4">${message}</p>
+                    ${isWin ? `
+                        <div class="bg-black/40 p-3 rounded-2xl w-full mb-4 space-y-1 text-xs">
+                            ${goldReward > 0 ? `<div class="text-amber-300 font-bold">🪙 ${goldReward.toLocaleString()} 골드 획득</div>` : ''}
+                            ${gemReward > 0 ? `<div class="text-cyan-300 font-bold">💎 ${gemReward} 다이아 획득</div>` : ''}
+                            ${bossType === 'record' ? `<div class="text-purple-300 font-bold mt-1">⭐ 최고 기록: ${gameState.recordDungeonFloor}층 달성!</div>` : ''}
+                        </div>
+                    ` : ''}
+                    <button onclick="closeModal(); switchTab('battle');" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg">확인</button>
+                </div>
+            `;
+        }
+
+        /* --- 6. TRADE & SECRET CODES ('0327', '03270327', '032703270327') --- */
+        function renderTradeView(container) {
+            container.innerHTML = `
+                <div class="p-4 flex flex-col items-center min-h-[75vh] pb-24 space-y-4">
+                    <div class="text-center">
+                        <h2 class="text-base font-bold text-amber-300 font-['Jua'] mb-1">교환실 & 자원 환전소</h2>
+                        <p class="text-xs text-slate-400">100 골드를 다이아 50개로 환전하거나, 보물 및 재화를 친구에게 선물하세요!</p>
+                    </div>
+
+                    <div class="glass-panel w-full max-w-xs p-4 rounded-2xl border border-amber-500/40 bg-gradient-to-br from-amber-500/10 via-slate-900/80 to-slate-900/90 shadow-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-amber-300">💱 골드 ➔ 다이아 환전소</span>
+                            <span class="text-[10px] text-cyan-300 bg-cyan-950/60 px-2 py-0.5 rounded-full border border-cyan-500/30">🪙 100 ➔ 💎 50</span>
+                        </div>
+                        <p class="text-[11px] text-slate-300 mb-3">100 골드를 소모하여 즉시 50 다이아몬드를 획득합니다!</p>
+                        <button onclick="exchangeGoldForDiamonds()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg active:scale-95 flex items-center justify-center space-x-1.5">
+                            <span>🪙 100 골드 교환하기</span>
+                        </button>
+                    </div>
+
+                    <div class="glass-panel w-full max-w-xs p-4 rounded-2xl border border-purple-500/40 space-y-3 bg-purple-950/20">
+                        <span class="text-xs font-bold text-purple-300 block">📱 일회용 교환 & 송금 시스템</span>
+                        <p class="text-[10px] text-slate-300 leading-relaxed">선물 코드를 생성하여 친구에게 보물이나 재화를 선물할 수 있습니다.</p>
+                        <button onclick="openCompactExportModal()" class="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs transition shadow">✨ 일회용 선물 코드 생성하기</button>
+                        
+                        <div class="pt-2 border-t border-purple-500/20 space-y-2">
+                            <input id="compact-import-code" type="text" placeholder="친구의 교환 코드 붙여넣기" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 font-mono text-center">
+                            <button onclick="redeemCompactCode()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition shadow">🎁 보물 및 재화 수령하기</button>
+                        </div>
+                    </div>
+
+                    <div class="w-full max-w-xs pt-2">
+                        <input id="dev-code-input" type="text" placeholder="개발자 코드 입력" oninput="checkDeveloperCode(this)" class="w-full bg-slate-950/60 border border-slate-800/60 rounded-xl px-3 py-2 text-[11px] text-slate-500 placeholder-slate-600 focus:outline-none focus:border-slate-700 font-mono text-center">
+                    </div>
+                </div>
+            `;
+        }
+
+        function exchangeGoldForDiamonds() {
+            if (gameState.gold < 100) {
+                showToast("❌ 골드가 부족합니다! (필요: 100 골드)");
+                return;
+            }
+            gameState.gold -= 100;
+            gameState.gems += 50;
+            saveGame();
+            showToast("✨ 환전 성공! 💎 50 다이아를 획득했습니다!");
+            updateHeader();
+            if (currentTab === 'trade') {
+                renderTradeView(document.getElementById('main-content'));
+            }
+        }
+
+        function checkDeveloperCode(input) {
+            const code = input.value.trim();
+            if (code === '0327') {
+                gameState.gold += 10000000;
+                saveGame();
+                input.value = '';
+                showToast("🎉 [개발자 코드 승인] 🪙 10,000,000 골드가 충전되었습니다!");
+                updateHeader();
+            } else if (code === '03270327') {
+                const dragonT = ALL_TREASURES_DATABASE.find(t => t.name === '사룡');
+                if (dragonT) {
+                    const alreadyHas = gameState.inventory.some(i => i.baseId === dragonT.id) || gameState.codexUnlocked.includes(dragonT.id);
+                    if (alreadyHas) {
+                        showToast("⚠️ 이미 '사룡'을 보유하고 있거나 도감에 등록되어 있습니다!");
+                        input.value = '';
+                        return;
+                    }
+                    gameState.inventory.push({
+                        uid: `secret_dragon_${Date.now()}_${Math.random()}`,
+                        baseId: dragonT.id,
+                        enhanceLevel: 0,
+                        evolutionStage: 0
+                    });
+                    if (!gameState.codexUnlocked.includes(dragonT.id)) {
+                        gameState.codexUnlocked.push(dragonT.id);
+                    }
+                }
+                gameState.gold += 10000000;
+                saveGame();
+                input.value = '';
+                showToast("🐉 [비밀 코드 승인] 신화 보물 '사룡' 및 🪙 10,000,000 골드가 지급되었습니다!");
+                updateHeader();
+            } else if (code === '032703270327') {
+                const mythicList = ALL_TREASURES_DATABASE.filter(t => t.rarity === 'MYTHIC');
+                let addedCount = 0;
+                mythicList.forEach(m => {
+                    const alreadyHas = gameState.inventory.some(i => i.baseId === m.id);
+                    if (!alreadyHas) {
+                        gameState.inventory.push({
+                            uid: `all_mythic_${m.id}_${Date.now()}_${Math.random()}`,
+                            baseId: m.id,
+                            enhanceLevel: 0,
+                            evolutionStage: 0
+                        });
+                        addedCount++;
+                    }
+                    if (!gameState.codexUnlocked.includes(m.id)) {
+                        gameState.codexUnlocked.push(m.id);
+                    }
+                });
+                gameState.gold += 10000000;
+                saveGame();
+                input.value = '';
+                showToast(`🌟 [궁극 비밀 코드 승인] 모든 신화 보물(${addedCount}개) 및 🪙 1,000만 골드 지급 완료!`);
+                updateHeader();
+            }
+        }
+
+        function openCompactExportModal() {
+            const modal = document.getElementById('modal-container');
+            modal.classList.remove('hidden');
+
+            let html = `
+                <div class="glass-panel w-full max-w-sm p-4 rounded-3xl border border-slate-700/80 flex flex-col max-h-[85vh] shadow-2xl">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-sm font-bold text-amber-300 font-['Jua']">보낼 보물 및 재화 선택</h3>
+                        <button onclick="closeModal()" class="text-slate-400 hover:text-white text-xs">✕ 닫기</button>
+                    </div>
+
+                    <div class="bg-slate-900/80 p-3 rounded-2xl border border-slate-700/80 mb-3 space-y-2">
+                        <div class="text-[11px] font-bold text-amber-300">🪙 보낼 골드 (보유: ${gameState.gold.toLocaleString()})</div>
+                        <input id="trade-send-gold" type="number" min="0" max="${gameState.gold}" value="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-amber-300 font-mono">
+                        
+                        <div class="text-[11px] font-bold text-cyan-300 pt-1">💎 보낼 다이아 (보유: ${gameState.gems.toLocaleString()})</div>
+                        <input id="trade-send-gems" type="number" min="0" max="${gameState.gems}" value="0" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-cyan-300 font-mono">
+                    </div>
+
+                    <div class="text-[11px] font-bold text-slate-300 mb-2">함께 보낼 보물 선택 (선택사항)</div>
+                    <div class="flex-1 overflow-y-auto grid grid-cols-2 gap-2">
+                        <div onclick="generateCompactCode(null)" class="treasure-card-frame bg-slate-900/60 border border-slate-700 cursor-pointer hover:scale-[1.02] transition p-2.5 flex items-center justify-center text-center">
+                            <span class="text-xs font-bold text-slate-300">📦 보물 없이<br>골드/다이아만 전송</span>
+                        </div>
+            `;
+
+            gameState.inventory.forEach(item => {
+                const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+                const rInfo = RARITIES[base.rarity];
+                const evoMeta = getEvolutionMeta(base, item.evolutionStage);
+                const power = Math.floor(base.basePower * Math.pow(1.15, item.enhanceLevel) * Math.pow(1.5, item.evolutionStage));
+                const stageClass = `evo-stage-${item.evolutionStage}`;
+
+                html += `
+                    <div onclick="generateCompactCode('${item.uid}')" class="treasure-card-frame ${rInfo.bg} ${stageClass} cursor-pointer hover:scale-[1.02] transition p-2.5">
+                        <div class="absolute top-2 right-2 bg-black/40 px-1.5 py-0.5 rounded text-[8px] font-mono text-amber-300">+${item.enhanceLevel}</div>
+                        <div class="treasure-icon-box bg-slate-900/80 my-auto w-12 h-12">${evoMeta.svg}</div>
+                        <div class="text-[10px] ${rInfo.text} font-bold truncate w-full text-center mt-1">${evoMeta.name}</div>
+                        <div class="text-[9px] text-amber-400 font-mono text-center">전력: ${power.toLocaleString()}</div>
+                    </div>
+                `;
+            });
+
+            html += `</div></div>`;
+            modal.innerHTML = html;
+        }
+
+        function generateCompactCode(uid) {
+            const sendGold = parseInt(document.getElementById('trade-send-gold').value) || 0;
+            const sendGems = parseInt(document.getElementById('trade-send-gems').value) || 0;
+
+            if (sendGold < 0 || sendGold > gameState.gold) {
+                showToast("❌ 보낼 골드 수량이 잘못되었습니다.");
+                return;
+            }
+            if (sendGems < 0 || sendGems > gameState.gems) {
+                showToast("❌ 보낼 다이아 수량이 잘못되었습니다.");
+                return;
+            }
+
+            gameState.gold -= sendGold;
+            gameState.gems -= sendGems;
+
+            let itemPayload = null;
+            if (uid) {
+                const itemIdx = gameState.inventory.findIndex(i => i.uid === uid);
+                if (itemIdx !== -1) {
+                    const item = gameState.inventory[itemIdx];
+                    const base = ALL_TREASURES_DATABASE.find(t => t.id === item.baseId);
+                    if (base && base.name === '사룡') {
+                        showToast("❌ '사룡'은 선물로 보낼 수 없습니다!");
+                        gameState.gold += sendGold;
+                        gameState.gems += sendGems;
+                        closeModal();
+                        return;
+                    }
+                    gameState.inventory.splice(itemIdx, 1);
+                    itemPayload = {
+                        b: item.baseId,
+                        e: item.enhanceLevel,
+                        v: item.evolutionStage || 0,
+                        id: item.uid
+                    };
+                }
+            }
+
+            saveGame();
+
+            const tokenObj = {
+                g: sendGold,
+                d: sendGems,
+                i: itemPayload,
+                t: Date.now(),
+                nonce: Math.random().toString(36).substring(2, 9)
+            };
+
+            const tokenString = btoa(encodeURIComponent(JSON.stringify(tokenObj)));
+
+            const modal = document.getElementById('modal-container');
+            modal.innerHTML = `
+                <div class="glass-panel w-full max-w-sm p-5 rounded-3xl border border-slate-700/80 flex flex-col items-center text-center shadow-2xl">
+                    <h3 class="text-sm font-bold text-amber-300 mb-2">✨ 일회용 선물 코드 생성 완료!</h3>
+                    <p class="text-[11px] text-slate-300 mb-3">아래 코드를 복사해서 친구에게 전달해주세요. (이 코드는 단 1회만 사용 가능합니다)</p>
+                    
+                    <textarea readonly id="compact-token-box" class="w-full h-24 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-[10px] text-amber-300 font-mono mb-3 select-all">${tokenString}</textarea>
+
+                    <div class="flex space-x-2 w-full">
+                        <button onclick="copyCompactTokenToClipboard()" class="flex-1 py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs transition">코드 복사하기</button>
+                        <button onclick="closeModal(); switchTab('trade');" class="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition">확인</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function copyCompactTokenToClipboard() {
+            const box = document.getElementById('compact-token-box');
+            box.select();
+            document.execCommand('copy');
+            showToast("📋 교환 코드가 복사되었습니다!");
+        }
+
+        function redeemCompactCode() {
+            const codeInput = document.getElementById('compact-import-code');
+            const tokenStr = codeInput.value.trim();
+            if (!tokenStr) {
+                showToast("❌ 친구의 교환 코드를 입력해주세요!");
+                return;
+            }
+
+            if (!gameState.usedTradeCodes) gameState.usedTradeCodes = [];
+
+            if (gameState.usedTradeCodes.includes(tokenStr)) {
+                showToast("❌ 이미 사용되었거나 만료된 일회용 교환 코드입니다!");
+                return;
+            }
+
+            try {
+                const decodedJson = decodeURIComponent(atob(tokenStr));
+                const data = JSON.parse(decodedJson);
+
+                if (data.i && data.i.b) {
+                    const base = ALL_TREASURES_DATABASE.find(t => t.id === data.i.b);
+                    if (base && base.name === '사룡') {
+                        const alreadyHas = gameState.inventory.some(i => i.baseId === base.id) || gameState.codexUnlocked.includes(base.id);
+                        if (alreadyHas) {
+                            showToast("❌ 이미 '사룡'을 보유하고 있어 수령할 수 없습니다!");
+                            return;
+                        }
+                    }
+                }
+
+                gameState.usedTradeCodes.push(tokenStr);
+
+                let receivedSummary = [];
+                if (data.g && data.g > 0) {
+                    gameState.gold += data.g;
+                    receivedSummary.push(`🪙 골드 ${data.g.toLocaleString()}`);
+                }
+                if (data.d && data.d > 0) {
+                    gameState.gems += data.d;
+                    receivedSummary.push(`💎 다이아 ${data.d.toLocaleString()}`);
+                }
+                if (data.i && data.i.b) {
+                    gameState.inventory.push({
+                        uid: `received_${data.i.b}_${Date.now()}_${Math.random()}`,
+                        baseId: data.i.b,
+                        enhanceLevel: data.i.e,
+                        evolutionStage: data.i.v || 0
+                    });
+
+                    if (!gameState.codexUnlocked.includes(data.i.b)) {
+                        gameState.codexUnlocked.push(data.i.b);
+                    }
+                    const base = ALL_TREASURES_DATABASE.find(t => t.id === data.i.b);
+                    receivedSummary.push(`🎁 보물 (${base ? base.name : '신비한 보물'})`);
+                }
+
+                saveGame();
+                codeInput.value = '';
+                showToast(`🎉 수령 성공: ${receivedSummary.join(', ')}! (일회용 코드 소멸)`);
+                switchTab('inventory');
+            } catch (e) {
+                showToast("❌ 올바르지 않거나 손상된 교환 코드입니다.");
+            }
+        }
+
+        window.onload = function() {
+            initGame();
+        };
+    </script>
+</body>
+</html>
